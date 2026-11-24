@@ -13,13 +13,17 @@ const fmt = (n) => Number(Number(n).toFixed(2)).toLocaleString('ko-KR');
 
 /** spec: { type: hist|bar|line, title, xTitle, yTitle, x[], y[], hi, every } */
 export function chartHTML(spec) {
-  const { type, x, y, hi = -1, every = 1 } = spec;
-  let top = niceMax(Math.max(...y)), lo = 0;
+  const { type, x = [], y = [], every = 1 } = spec;
+  if (!y.length || y.length !== x.length) return '';
+  const hi = Number.isInteger(spec.hi) && spec.hi >= 0 && spec.hi < y.length ? spec.hi : y.indexOf(Math.max(...y));
+  const title = spec.title ?? '', xTitle = spec.xTitle ?? '', yTitle = spec.yTitle ?? '';
+  let top = niceMax(Math.max(...y, 1)), lo = 0;
   if (type === 'line') {
     const mn = Math.min(...y), mx = Math.max(...y);
     const step = 10 ** Math.floor(Math.log10(mx - mn || 1));
     lo = Math.floor(mn / step) * step;
     top = Math.ceil(mx / step) * step;
+    if (top === lo) top = lo + step;
   }
   const pw = W - L - R, ph = H - T - B;
   const n = x.length;
@@ -51,9 +55,9 @@ export function chartHTML(spec) {
   x.forEach((label, i) => {
     if (i % every === 0) parts.push(`<text class="xt" x="${cx(i).toFixed(1)}" y="${T + ph + 15}" text-anchor="middle">${esc(label)}</text>`);
   });
-  parts.push(`<text class="at" x="${(L + pw / 2).toFixed(1)}" y="${H - 5}" text-anchor="middle">${esc(spec.xTitle)}</text>`);
-  parts.push(`<text class="at" transform="translate(11 ${T + ph / 2}) rotate(-90)" text-anchor="middle">${esc(spec.yTitle)}</text>`);
-  return `<figure class="chart"><figcaption>${esc(spec.title)}</figcaption><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(spec.title)}">${parts.join('')}</svg></figure>`;
+  parts.push(`<text class="at" x="${(L + pw / 2).toFixed(1)}" y="${H - 5}" text-anchor="middle">${esc(xTitle)}</text>`);
+  parts.push(`<text class="at" transform="translate(11 ${T + ph / 2}) rotate(-90)" text-anchor="middle">${esc(yTitle)}</text>`);
+  return `<figure class="chart"><figcaption>${esc(title)}</figcaption><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(title)}">${parts.join('')}</svg></figure>`;
 }
 
 /** { head: [], rows: [[]] } → 표 */

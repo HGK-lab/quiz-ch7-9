@@ -58,7 +58,7 @@ function renderHome() {
     <button class="linkbtn" id="reset" type="button">기록 초기화</button>`, 'home');
   const reset = document.getElementById('reset');
   reset.addEventListener('click', () => {
-    if (reset.dataset.armed) { store.reset(); renderHome(); return; }
+    if (reset.dataset.armed) { store.reset(); session = null; renderHome(); return; }
     reset.dataset.armed = '1';
     reset.textContent = '한 번 더 누르면 모든 기록이 지워져요';
   });
@@ -155,8 +155,10 @@ function renderQuestion() {
     const j = Number(b.dataset.j);
     s.picks[s.i] = j;
     if (s.kind !== 'mock') store.recordAnswer(q.id, grade(q, choices[j]));
+    const y = window.scrollY;
     renderQuestion();
     if (s.kind !== 'mock') document.querySelector('.result')?.scrollIntoView({ block: 'nearest' });
+    else window.scrollTo(0, y);
   }));
   document.getElementById('next')?.addEventListener('click', () => {
     if (s.i + 1 < s.list.length) { s.i += 1; renderQuestion(); } else finishSession();
@@ -173,7 +175,7 @@ function finishSession() {
     const ch = s.choices[i];
     const right = ch.find((c) => c.isAnswer);
     const mine = ch[s.picks[i]];
-    const fmt = (c) => (q.type === 'ox' ? c.text : `${NUMS[ch.indexOf(c)]} ${esc(c.text)}`);
+    const fmt = (c) => (q.type === 'ox' ? c.text : `${NUMS[ch.indexOf(c)]} ${choiceText(c.text)}`);
     return `<li><div class="line"><span>${i + 1}. ${esc(q.stem)}</span><span class="${results[i] ? 'mark-ok' : 'mark-bad'}">${results[i] ? '정답' : '오답'}</span></div>
       ${results[i] && s.kind !== 'mock' ? '' : `${q.code && !results[i] ? `<pre class="code">${esc(q.code)}</pre>` : ''}<p class="meta">내 답 ${mine ? fmt(mine) : '없음'} · 정답 ${fmt(right)}</p><div class="explain">${esc(q.explain)}</div>`}</li>`;
   }).join('');
@@ -198,8 +200,8 @@ function finishSession() {
 }
 
 function runSession(key, kind, opts, emptyHTML, tab) {
-  if (!session || session.key !== key || session.done) startSession(key, kind, opts);
-  if (!session.list.length) return show(emptyHTML, tab);
+  if (!session || session.key !== key || session.done || kind === 'wrong') startSession(key, kind, opts);
+  if (!session.list.length) { session = null; return show(emptyHTML, tab); }
   renderQuestion();
 }
 

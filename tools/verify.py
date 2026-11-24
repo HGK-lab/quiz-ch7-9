@@ -36,7 +36,7 @@ def verify(q: dict):
     if q["type"] == "mc":
         if len(q["choices"]) != 4 or len(set(q["choices"])) != 4:
             return f"{q['id']}: 보기는 서로 다른 4개여야 함"
-        if not 0 <= q["answer"] < 4:
+        if type(q["answer"]) is not int or not 0 <= q["answer"] < 4:
             return f"{q['id']}: 정답 번호 범위 밖"
     elif q["type"] == "ox":
         if not isinstance(q["answer"], bool):
@@ -57,7 +57,7 @@ def verify(q: dict):
         return f"{q['id']}: 출력 {out!r} != expect {expect!r}"
     if q["type"] == "mc" and not q.get("loose") and q["choices"][q["answer"]] != expect:
         return f"{q['id']}: 정답 보기 {q['choices'][q['answer']]!r} != expect {expect!r}"
-    if q["type"] == "ox" and expect not in q["explain"]:
+    if q["type"] == "ox" and f"{expect}" not in q["explain"].replace(",", ""):
         return f"{q['id']}: O/X 해설에 실행 결과 {expect!r}가 없음"
     return None
 

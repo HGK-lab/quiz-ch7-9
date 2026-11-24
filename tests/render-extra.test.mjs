@@ -24,3 +24,15 @@ test('compare table escapes html', () => {
   const html = compareHTML({ head: ['a'], rows: [['<b>', 'x']] });
   assert.ok(html.includes('&lt;b&gt;'));
 });
+
+test('degenerate charts never print NaN', () => {
+  const base = { title: 't', xTitle: 'x', yTitle: 'y', every: 1 };
+  const cases = [
+    { ...base, type: 'hist', x: ['a', 'b'], y: [0, 0] },
+    { ...base, type: 'line', x: ['a', 'b'], y: [5, 5], hi: 0 },
+    { ...base, type: 'line', x: ['a'], y: [5] },
+    { ...base, type: 'line', x: ['a', 'b', 'c'], y: [1, 2, 3] },
+  ];
+  for (const c of cases) assert.ok(!/NaN|Infinity|undefined/.test(chartHTML(c)), JSON.stringify(c));
+  assert.equal(chartHTML({ ...base, type: 'bar', x: [], y: [] }), '');
+});

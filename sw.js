@@ -1,5 +1,5 @@
 // 내용(data, js, css)을 고치면 VERSION을 올린다. 그래야 휴대폰에 새 버전이 반영된다.
-const VERSION = 'v1';
+const VERSION = 'v2';
 const CACHE = `quiz-ch7-9-${VERSION}`;
 const APP = [
   './', 'index.html', 'css/app.css', 'js/app.js', 'js/quiz.js', 'js/store.js', 'js/render-table.js', 'js/render-extra.js',
@@ -22,9 +22,10 @@ self.addEventListener('activate', (e) => {
 async function networkFirst(req) {
   const cache = await caches.open(CACHE);
   try {
-    const res = await fetch(req);
-    if (res.ok) cache.put(req, res.clone());
-    return res;
+    const res = await fetch(req, { cache: 'reload' });
+    if (res.ok) { cache.put(req, res.clone()); return res; }
+    const hit = await cache.match(req);
+    return hit || res;
   } catch {
     const hit = await cache.match(req);
     if (hit) return hit;
