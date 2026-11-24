@@ -1,0 +1,400 @@
+[
+ {
+  "id": "e_headtail",
+  "code": "print(df.head(2))\nprint(df.tail(2))",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "Series_Title",
+     "IMDB_Rating",
+     "No_of_Votes"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4",
+     "5"
+    ],
+    "rows": [
+     [
+      "A",
+      "8.1",
+      "120"
+     ],
+     [
+      "B",
+      "9.0",
+      "450"
+     ],
+     [
+      "C",
+      "7.6",
+      "80"
+     ],
+     [
+      "D",
+      "8.4",
+      "300"
+     ],
+     [
+      "E",
+      "7.9",
+      "150"
+     ],
+     [
+      "F",
+      "8.8",
+      "500"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "  Series_Title  IMDB_Rating  No_of_Votes\n0            A          8.1          120\n1            B          9.0          450\n  Series_Title  IMDB_Rating  No_of_Votes\n4            E          7.9          150\n5            F          8.8          500"
+  }
+ },
+ {
+  "id": "e_shape",
+  "code": "print(df.shape)",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "Title",
+     "Rating",
+     "Votes"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3"
+    ],
+    "rows": [
+     [
+      "A",
+      "8.1",
+      "120"
+     ],
+     [
+      "B",
+      "9.0",
+      "450"
+     ],
+     [
+      "C",
+      "7.6",
+      "80"
+     ],
+     [
+      "D",
+      "8.4",
+      "300"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "(4, 3)"
+  }
+ },
+ {
+  "id": "e_describe",
+  "code": "print(df['IMDB_Rating'].describe())",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "IMDB_Rating"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4"
+    ],
+    "rows": [
+     [
+      "7.6"
+     ],
+     [
+      "8.0"
+     ],
+     [
+      "8.4"
+     ],
+     [
+      "9.0"
+     ],
+     [
+      "9.2"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "count    5.000000\nmean     8.440000\nstd      0.669328\nmin      7.600000\n25%      8.000000\n50%      8.400000\n75%      9.000000\nmax      9.200000\nName: IMDB_Rating, dtype: float64"
+  }
+ },
+ {
+  "id": "e_stats",
+  "code": "print(df['IMDB_Rating'].mean())\nprint(df['IMDB_Rating'].max())\nprint(df['IMDB_Rating'].min())",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "IMDB_Rating"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3"
+    ],
+    "rows": [
+     [
+      "7.6"
+     ],
+     [
+      "8.0"
+     ],
+     [
+      "9.3"
+     ],
+     [
+      "7.6"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "8.125\n9.3\n7.6"
+  }
+ },
+ {
+  "id": "e_mask",
+  "code": "max_rating = df['IMDB_Rating'].max()\nmask = df['IMDB_Rating'] == max_rating\nprint(mask)\nprint(df[mask])",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "Series_Title",
+     "IMDB_Rating"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3"
+    ],
+    "rows": [
+     [
+      "A",
+      "8.6"
+     ],
+     [
+      "B",
+      "7.9"
+     ],
+     [
+      "C",
+      "9.0"
+     ],
+     [
+      "D",
+      "8.0"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "0    False\n1    False\n2     True\n3    False\nName: IMDB_Rating, dtype: bool\n  Series_Title  IMDB_Rating\n2            C          9.0"
+  }
+ },
+ {
+  "id": "e_votes",
+  "code": "print(df['No_of_Votes'].sum())\nprint(df['No_of_Votes'].mean())",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "No_of_Votes"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3"
+    ],
+    "rows": [
+     [
+      "120"
+     ],
+     [
+      "80"
+     ],
+     [
+      "300"
+     ],
+     [
+      "500"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "1000\n250.0"
+  }
+ },
+ {
+  "id": "e_range",
+  "code": "mid = df[(df['IMDB_Rating'] >= 8.0) & (df['IMDB_Rating'] < 9.0)]\nprint(mid)\nprint(len(mid))",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "Series_Title",
+     "IMDB_Rating"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4"
+    ],
+    "rows": [
+     [
+      "A",
+      "7.8"
+     ],
+     [
+      "B",
+      "8.0"
+     ],
+     [
+      "C",
+      "8.9"
+     ],
+     [
+      "D",
+      "9.0"
+     ],
+     [
+      "E",
+      "8.4"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "  Series_Title  IMDB_Rating\n1            B          8.0\n2            C          8.9\n4            E          8.4\n3"
+  }
+ },
+ {
+  "id": "e_groupby_mean",
+  "code": "monthly_amount = df.groupby('주문년월')['주문금액'].mean()\nprint(monthly_amount)\nprint(list(monthly_amount.index))\nprint(list(monthly_amount.values))",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "주문ID",
+     "주문년월",
+     "주문금액"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4"
+    ],
+    "rows": [
+     [
+      "1",
+      "2026-01",
+      "10000"
+     ],
+     [
+      "2",
+      "2026-01",
+      "20000"
+     ],
+     [
+      "3",
+      "2026-02",
+      "15000"
+     ],
+     [
+      "4",
+      "2026-02",
+      "30000"
+     ],
+     [
+      "5",
+      "2026-02",
+      "15000"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "주문년월\n2026-01    15000.0\n2026-02    20000.0\nName: 주문금액, dtype: float64\n['2026-01', '2026-02']\n[np.float64(15000.0), np.float64(20000.0)]"
+  }
+ },
+ {
+  "id": "e_groupby_count",
+  "code": "transactions = df.groupby('주문년월')['주문ID'].count()\nprint(transactions)",
+  "before": [
+   {
+    "name": "df",
+    "columns": [
+     "주문ID",
+     "주문년월",
+     "주문금액"
+    ],
+    "index": [
+     "0",
+     "1",
+     "2",
+     "3",
+     "4"
+    ],
+    "rows": [
+     [
+      "1",
+      "2026-01",
+      "10000"
+     ],
+     [
+      "2",
+      "2026-01",
+      "20000"
+     ],
+     [
+      "3",
+      "2026-02",
+      "15000"
+     ],
+     [
+      "4",
+      "2026-02",
+      "30000"
+     ],
+     [
+      "5",
+      "2026-02",
+      "15000"
+     ]
+    ]
+   }
+  ],
+  "after": {
+   "text": "주문년월\n2026-01    2\n2026-02    3\nName: 주문ID, dtype: int64"
+  }
+ }
+]

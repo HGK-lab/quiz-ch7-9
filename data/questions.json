@@ -1,0 +1,489 @@
+[
+ {
+  "id": "q7-01",
+  "unit": 7,
+  "type": "ox",
+  "stem": "탐색적 데이터 분석(EDA)에서는 데이터 구조를 이해하고, 결측치·이상치·중복값을 확인하고, 변수 사이의 패턴을 찾는다.",
+  "code": null,
+  "answer": true,
+  "explain": "EDA의 세 가지 주요 작업이다: 구조 이해, 품질 확인(결측치·이상치·중복값), 패턴·관계 탐색.",
+  "pages": "p.2",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-02",
+  "unit": 7,
+  "type": "ox",
+  "stem": "df.shape는 속성이 아니라 메서드이므로 df.shape()처럼 괄호를 붙여 호출해야 한다.",
+  "code": null,
+  "answer": false,
+  "explain": "shape는 속성이다. 괄호 없이 df.shape로 쓰고, 결과는 (행, 열) 튜플이다. 괄호를 붙이면 튜플을 호출하려 해서 오류가 난다.",
+  "pages": "p.6",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-03",
+  "unit": 7,
+  "type": "ox",
+  "stem": "head()와 tail()에 숫자를 넣지 않으면 각각 처음 5행, 마지막 5행을 보여 준다.",
+  "code": null,
+  "answer": true,
+  "explain": "head()와 tail()의 기본값은 5행이다. head(3)처럼 숫자를 넣으면 그 개수만큼 본다.",
+  "pages": "p.5",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-04",
+  "unit": 7,
+  "type": "ox",
+  "stem": "불리언 인덱싱은 먼저 조건 검사로 True/False Series를 만들고, 그다음 True인 행만 걸러 내는 순서로 이루어진다.",
+  "code": null,
+  "answer": true,
+  "explain": "1단계 조건 검사로 불리언 마스크를 만들고, 2단계 df[마스크]로 True인 행만 추출한다.",
+  "pages": "p.9",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-05",
+  "unit": 7,
+  "type": "ox",
+  "stem": "다음 코드의 출력은 2이다.",
+  "code": "df = pd.DataFrame({'IMDB_Rating': [8.0, 9.0, 8.0, 7.5]})\nprint(len(df[df['IMDB_Rating'] == 8.0]))",
+  "answer": true,
+  "explain": "평점이 8.0인 행은 인덱스 0과 2, 두 행이므로 len의 결과는 2이다.",
+  "pages": "p.9–10, 18",
+  "lectureOnly": false,
+  "expect": "2"
+ },
+ {
+  "id": "q7-06",
+  "unit": 7,
+  "type": "mc",
+  "stem": "'data/movies.csv' 파일을 데이터프레임으로 불러오는 올바른 코드는?",
+  "code": null,
+  "choices": [
+   "df = pd.read_csv('data/movies.csv')",
+   "df = pd.load_csv('data/movies.csv')",
+   "df = pd.read_excel('data/movies.csv')",
+   "df = df.to_csv('data/movies.csv')"
+  ],
+  "answer": 0,
+  "explain": "csv 파일은 pd.read_csv()로 읽는다. read_excel은 엑셀용, to_csv는 파일로 저장하는 메서드다. pd.load_csv는 없다.",
+  "pages": "p.3",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-07",
+  "unit": 7,
+  "type": "mc",
+  "stem": "수치형 열의 개수, 평균, 표준편차, 최솟값, 사분위수, 최댓값을 한 번에 보여 주는 메서드는?",
+  "code": null,
+  "choices": [
+   "describe()",
+   "head()",
+   "tail()",
+   "shape"
+  ],
+  "answer": 0,
+  "explain": "describe()가 기본 통계 정보를 한꺼번에 보여 준다. head·tail은 행 확인용, shape은 크기 확인용이다.",
+  "pages": "p.6",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-08",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({\n    'Title': ['A', 'B', 'C', 'D'],\n    'Rating': [7.5, 8.5, 9.0, 7.0],\n    'Votes': [120, 80, 300, 500]\n})\nprint(df.shape)",
+  "choices": [
+   "(4, 3)",
+   "(3, 4)",
+   "(4, 4)",
+   "(3, 3)"
+  ],
+  "answer": 0,
+  "explain": "shape은 (행, 열) 순서다. 행이 4개, 열이 3개이므로 (4, 3)이다.",
+  "pages": "p.6",
+  "lectureOnly": false,
+  "expect": "(4, 3)"
+ },
+ {
+  "id": "q7-09",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({'IMDB_Rating': [7.5, 8.5, 9.0, 7.0]})\nprint(df['IMDB_Rating'].mean())",
+  "choices": [
+   "8.0",
+   "7.5",
+   "8.5",
+   "32.0"
+  ],
+  "answer": 0,
+  "explain": "mean()은 평균이다. (7.5 + 8.5 + 9.0 + 7.0) ÷ 4 = 8.0. 32.0은 sum()의 결과다.",
+  "pages": "p.8",
+  "lectureOnly": false,
+  "expect": "8.0"
+ },
+ {
+  "id": "q7-10",
+  "unit": 7,
+  "type": "mc",
+  "stem": "영화 전체의 투표 수 합계를 구하는 올바른 코드는?",
+  "code": null,
+  "choices": [
+   "df['No_of_Votes'].sum()",
+   "df['No_of_Votes'].mean()",
+   "df['No_of_Votes'].max()",
+   "df['No_of_Votes'].shape"
+  ],
+  "answer": 0,
+  "explain": "합계는 sum()이다. mean()은 영화당 평균 투표 수, max()는 가장 많은 투표 수다.",
+  "pages": "p.12",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-11",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과를 올바르게 설명한 것은?",
+  "code": "df = pd.DataFrame({'IMDB_Rating': [8.6, 7.9, 9.0, 8.0]})\nprint(df['IMDB_Rating'] > 8.0)",
+  "choices": [
+   "인덱스 0과 2만 True이다.",
+   "인덱스 0, 2, 3이 True이다.",
+   "인덱스 1만 True이다.",
+   "모든 행이 True이다."
+  ],
+  "answer": 0,
+  "explain": "> 8.0은 8.0보다 '큰' 값만 True다. 8.6(인덱스 0)과 9.0(인덱스 2)만 True이고 8.0(인덱스 3)은 False다.",
+  "pages": "p.9–10",
+  "lectureOnly": false,
+  "expect": "0     True\n1    False\n2     True\n3    False\nName: IMDB_Rating, dtype: bool",
+  "loose": true
+ },
+ {
+  "id": "q7-12",
+  "unit": 7,
+  "type": "mc",
+  "stem": "평점이 가장 낮은 영화를 모두 추출하는 올바른 코드는?",
+  "code": null,
+  "choices": [
+   "min_rating = df['IMDB_Rating'].min()\ndf[df['IMDB_Rating'] == min_rating]",
+   "min_rating = df['IMDB_Rating'].min()\ndf[df['IMDB_Rating'] = min_rating]",
+   "df['IMDB_Rating'].min()",
+   "df[df['IMDB_Rating'] == df['IMDB_Rating'].max()]"
+  ],
+  "answer": 0,
+  "explain": "최솟값을 구하고 ==로 같은지 비교해 True인 행만 뽑는다. =은 대입이라 오류, min()만 쓰면 값 하나뿐이고, max()와 비교하면 최고 평점 영화가 나온다.",
+  "pages": "p.11",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q7-13",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({'IMDB_Rating': [7.6, 8.1, 7.6, 7.6, 8.8]})\nmin_rating = df['IMDB_Rating'].min()\nresult = df[df['IMDB_Rating'] == min_rating]\nprint(len(result))",
+  "choices": [
+   "3",
+   "1",
+   "2",
+   "5"
+  ],
+  "answer": 0,
+  "explain": "최저 평점은 7.6이고 7.6인 영화는 3편(인덱스 0, 2, 3)이므로 len(result)는 3이다.",
+  "pages": "p.11",
+  "lectureOnly": false,
+  "expect": "3"
+ },
+ {
+  "id": "q7-14",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({'IMDB_Rating': [7.8, 8.0, 8.9, 9.0, 8.4, 9.3]})\nmid = df[(df['IMDB_Rating'] >= 8.0) & (df['IMDB_Rating'] < 9.0)]\nprint(len(mid))",
+  "choices": [
+   "3",
+   "2",
+   "4",
+   "6"
+  ],
+  "answer": 0,
+  "explain": "8.0 이상이고 9.0 미만인 값은 8.0, 8.9, 8.4로 3개다. 9.0은 '미만' 조건에서 빠진다.",
+  "pages": "p.18",
+  "lectureOnly": false,
+  "expect": "3"
+ },
+ {
+  "id": "q7-15",
+  "unit": 7,
+  "type": "mc",
+  "stem": "영화 투표수 히스토그램에서 0~20만 표 구간의 막대가 가장 높았다. 올바른 해석은?",
+  "code": null,
+  "choices": [
+   "투표수가 적은 영화가 많고, 투표수가 커질수록 영화 수가 줄어든다.",
+   "모든 영화의 투표수가 20만 표이다.",
+   "투표수가 많을수록 영화 수도 늘어난다.",
+   "투표수가 가장 많은 영화는 20만 표를 받았다."
+  ],
+  "answer": 0,
+  "explain": "막대 높이는 구간에 속한 영화 수다. 0~20만 구간이 가장 높고 오른쪽으로 갈수록 낮아지므로 투표수가 적은 영화가 대부분이다.",
+  "pages": "p.15–16",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-01",
+  "unit": 9,
+  "type": "ox",
+  "stem": "Plotly로 만든 그래프는 마우스로 확대·이동하거나 점 위에 올려 값을 볼 수 있다.",
+  "code": null,
+  "answer": true,
+  "explain": "Plotly는 줌, 이동, 툴팁 같은 상호작용을 지원하는 대화형 시각화 라이브러리다.",
+  "pages": "p.3",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-02",
+  "unit": 9,
+  "type": "ox",
+  "stem": "히스토그램에서 막대의 높이는 그 구간에 속한 데이터의 개수(빈도)를 나타낸다.",
+  "code": null,
+  "answer": true,
+  "explain": "데이터를 구간으로 나눠 각 구간의 빈도를 막대 높이로 표현하는 것이 히스토그램이다.",
+  "pages": "p.5",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-03",
+  "unit": 9,
+  "type": "ox",
+  "stem": "px.bar()는 시간에 따른 변화를 나타내는 꺾은선그래프를 그리는 함수이다.",
+  "code": null,
+  "answer": false,
+  "explain": "px.bar()는 막대그래프(범주별 크기 비교)다. 꺾은선그래프는 px.line()이다.",
+  "pages": "p.16, 21",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-04",
+  "unit": 9,
+  "type": "ox",
+  "stem": "Seaborn은 Matplotlib을 바탕으로 만든 고급 시각화 라이브러리로, 코드가 간결하고 기본 테마가 예쁘다.",
+  "code": null,
+  "answer": true,
+  "explain": "Seaborn은 Matplotlib 기반이고 코드가 간결하며 통계적 시각화에 강하다. 대신 Matplotlib보다 자유도가 낮다.",
+  "pages": "p.1",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-05",
+  "unit": 9,
+  "type": "mc",
+  "stem": "Plotly Express를 px라는 이름으로 불러오는 올바른 코드는?",
+  "code": null,
+  "choices": [
+   "import plotly.express as px",
+   "import express.plotly as px",
+   "import plotly.px as express",
+   "from px import plotly"
+  ],
+  "answer": 0,
+  "explain": "모듈 경로는 plotly.express이고 as px로 별칭을 붙인다.",
+  "pages": "p.4",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-06",
+  "unit": 9,
+  "type": "mc",
+  "stem": "분석 목적과 그래프 종류가 올바르게 짝지어진 것은?",
+  "code": null,
+  "choices": [
+   "개봉연도별 평균 평점의 변화 추세 - 꺾은선그래프",
+   "영화 평점의 분포 확인 - 꺾은선그래프",
+   "시간에 따른 평균 주문금액 변화 - 히스토그램",
+   "음식종류별 주문 횟수 비교 - 꺾은선그래프"
+  ],
+  "answer": 0,
+  "explain": "분포는 히스토그램, 시간·순서에 따른 변화는 꺾은선, 범주별 크기 비교는 막대그래프가 알맞다.",
+  "pages": "p.5, 16, 21",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-07",
+  "unit": 9,
+  "type": "mc",
+  "stem": "영화 투표수(No_of_Votes)의 분포를 히스토그램으로 나타내는 올바른 코드는?",
+  "code": null,
+  "choices": [
+   "px.histogram(df, x='No_of_Votes')",
+   "px.line(df, x='No_of_Votes')",
+   "px.bar(df, x='No_of_Votes')",
+   "px.show(df, x='No_of_Votes')"
+  ],
+  "answer": 0,
+  "explain": "히스토그램 함수는 px.histogram()이다. px.show라는 함수는 없고 그래프를 화면에 그리는 것은 fig.show()다.",
+  "pages": "p.6",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-08",
+  "unit": 9,
+  "type": "mc",
+  "stem": "다음 코드에서 nbins=25의 의미는?",
+  "code": "fig = px.histogram(df, x='IMDB_Rating', nbins=25)",
+  "choices": [
+   "히스토그램의 구간 개수를 약 25개로 설정한다.",
+   "영화 25편만 그래프에 표시한다.",
+   "평점이 25점 이상인 영화만 선택한다.",
+   "그래프의 가로 길이를 25로 설정한다."
+  ],
+  "answer": 0,
+  "explain": "nbins는 구간(bin)의 개수다. 값이 클수록 구간이 잘게 나뉜다. 구간 너비는 (최댓값 − 최솟값) ÷ nbins다.",
+  "pages": "p.6, 8",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-09",
+  "unit": 9,
+  "type": "mc",
+  "stem": "영화 평점 히스토그램에서 9.0점 이상 구간의 막대가 매우 낮다. 올바른 해석은?",
+  "code": null,
+  "choices": [
+   "9.0점 이상의 높은 평점을 받은 영화는 상대적으로 적다.",
+   "9.0점 이상의 영화는 하나도 없다.",
+   "모든 영화의 평균 평점이 9.0점이다.",
+   "평점이 낮은 영화가 가장 적다."
+  ],
+  "answer": 0,
+  "explain": "막대가 낮다는 것은 그 구간의 영화 수가 적다는 뜻이다. 없는 것은 아니다(막대가 0이 아니다).",
+  "pages": "p.7",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-10",
+  "unit": 9,
+  "type": "mc",
+  "stem": "Plotly 도구 모음에서 그래프를 처음 상태로 되돌리는 기능은?",
+  "code": null,
+  "choices": [
+   "Reset Axes (집 모양)",
+   "Autoscale (화살표 회전)",
+   "Pan (손바닥)",
+   "Zoom (돋보기)"
+  ],
+  "answer": 0,
+  "explain": "Reset Axes가 초기 상태로 복원한다. Autoscale은 데이터 범위에 맞게 축을 자동 조정, Pan은 이동, Zoom은 확대다.",
+  "pages": "p.11",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-11",
+  "unit": 9,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({\n    '주문년월': ['2026-01', '2026-01', '2026-02', '2026-02', '2026-02'],\n    '주문금액': [10000, 20000, 15000, 30000, 15000]\n})\nmonthly = df.groupby('주문년월')['주문금액'].mean()\nprint(monthly['2026-02'])",
+  "choices": [
+   "20000.0",
+   "15000.0",
+   "60000",
+   "18000.0"
+  ],
+  "answer": 0,
+  "explain": "2026-02 묶음은 15000, 30000, 15000이고 평균은 20000.0이다. 15000.0은 1월 평균, 18000.0은 전체 평균이다.",
+  "pages": "p.15",
+  "lectureOnly": false,
+  "expect": "20000.0"
+ },
+ {
+  "id": "q9-12",
+  "unit": 9,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({\n    '주문ID': [1, 2, 3, 4, 5],\n    '주문년월': ['2026-01', '2026-01', '2026-02', '2026-02', '2026-02']\n})\ntransactions = df.groupby('주문년월')['주문ID'].count()\nprint(transactions['2026-02'])",
+  "choices": [
+   "3",
+   "2",
+   "5",
+   "60000"
+  ],
+  "answer": 0,
+  "explain": "count()는 묶음마다 주문ID의 개수를 센다. 2026-02는 3건이다.",
+  "pages": "p.20",
+  "lectureOnly": false,
+  "expect": "3"
+ },
+ {
+  "id": "q9-13",
+  "unit": 9,
+  "type": "mc",
+  "stem": "monthly_amount = df.groupby('주문년월')['주문금액'].mean() 에서 monthly_amount.index와 monthly_amount.values는 각각 무엇인가?",
+  "code": null,
+  "choices": [
+   "index는 주문년월 값들, values는 월별 평균 주문금액들",
+   "index는 월별 평균 주문금액들, values는 주문년월 값들",
+   "index와 values 모두 주문ID",
+   "index는 0부터 239까지의 행 번호, values는 주문년월"
+  ],
+  "answer": 0,
+  "explain": "groupby의 기준 열(주문년월)이 결과의 index가 되고, 계산된 평균이 values가 된다. 그래서 x=index, y=values로 그래프를 그린다.",
+  "pages": "p.15",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-14",
+  "unit": 9,
+  "type": "mc",
+  "stem": "막대그래프의 X축 이름을 '월', Y축 이름을 '횟수'로 바꾸기 위해 빈칸에 들어갈 코드는?",
+  "code": "fig = px.bar(\n    transactions,\n    x=transactions.index,\n    y=transactions.values,\n    _____\n)",
+  "choices": [
+   "labels={'x': '월', 'y': '횟수'}",
+   "labels=['월', '횟수']",
+   "title={'x': '월', 'y': '횟수'}",
+   "xlabel='월', ylabel='횟수'"
+  ],
+  "answer": 0,
+  "explain": "px.bar()의 labels는 딕셔너리다. xlabel, ylabel은 Matplotlib 방식이라 Plotly에서는 쓰지 않는다.",
+  "pages": "p.22",
+  "lectureOnly": false,
+  "expect": null
+ },
+ {
+  "id": "q9-15",
+  "unit": 9,
+  "type": "mc",
+  "stem": "월별 평균 주문금액(1월 21000, 2월 17000, 3월 24000, 4월 19000)을 꺾은선그래프로 그렸을 때 올바른 해석은?",
+  "code": null,
+  "choices": [
+   "3월이 가장 높고 2월이 가장 낮다.",
+   "1월부터 4월까지 매월 증가한다.",
+   "2월이 가장 높다.",
+   "4월이 1월보다 높다."
+  ],
+  "answer": 0,
+  "explain": "값을 비교하면 3월 24000이 최대, 2월 17000이 최소다. 4월(19000)은 1월(21000)보다 낮고 매월 증가하지도 않는다.",
+  "pages": "p.18",
+  "lectureOnly": false,
+  "expect": null
+ }
+]

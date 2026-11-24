@@ -1,0 +1,6 @@
+docs/
+.superpowers/
+__pycache__/
+*.pdf
+node_modules/
+.omc/
