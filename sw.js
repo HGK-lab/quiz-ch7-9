@@ -1,5 +1,5 @@
 // 내용(data, js, css)을 고치면 VERSION을 올린다. 그래야 휴대폰에 새 버전이 반영된다.
-const VERSION = 'v3';
+const VERSION = 'v4';
 const CACHE = `quiz-ch7-9-${VERSION}`;
 const APP = [
   './', 'index.html', 'css/app.css', 'js/app.js', 'js/quiz.js', 'js/store.js', 'js/render-table.js', 'js/render-extra.js',

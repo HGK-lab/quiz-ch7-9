@@ -99,11 +99,16 @@ test('mock always has one question per reported topic and keeps 3 ox + 7 mc', ()
 test('mock on real question bank covers all reported topics', () => {
   const bank = JSON.parse(readFileSync(new URL('../data/questions.json', import.meta.url), 'utf8'));
   const topics = reportedTopics(bank);
-  assert.deepEqual([...topics].sort(), ['bar', 'bool', 'nbins', 'tail']);
+  assert.deepEqual([...topics].sort(), ['bar', 'bool', 'describe', 'nbins', 'tail']);
   for (let k = 0; k < 200; k++) {
     const r = buildSession('mock', { questions: bank });
     assert.equal(r.length, MOCK_SIZE);
     assert.equal(r.filter((q) => q.type === 'ox').length, MOCK_OX);
     for (const t of topics) assert.ok(r.some((q) => q.reported === t), t);
   }
+});
+
+test('reported session can be limited to one topic', () => {
+  const qs = [rep(mc('q9-02', 9), 'bar'), rep(ox('q7-03', true), 'tail'), rep(mc('q7-07'), 'describe'), rep(ox('q7-21', true), 'describe')];
+  assert.deepEqual(buildSession('reported', { questions: qs, topic: 'describe' }).map((q) => q.id), ['q7-07', 'q7-21']);
 });

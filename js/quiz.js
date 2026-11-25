@@ -38,9 +38,9 @@ export function reportedTopics(questions) {
 }
 
 /** 풀 문항 목록을 만든다. kind: 'unit' | 'wrong' | 'reported' | 'mock' */
-export function buildSession(kind, { questions, unit, wrongIds = [], rand = Math.random }) {
+export function buildSession(kind, { questions, unit, topic, wrongIds = [], rand = Math.random }) {
   if (kind === 'unit') return questions.filter((q) => q.unit === unit).sort(byId);
-  if (kind === 'reported') return questions.filter((q) => q.reported).sort(byId);
+  if (kind === 'reported') return questions.filter((q) => (topic ? q.reported === topic : q.reported)).sort(byId);
   if (kind === 'wrong') {
     const want = new Set(wrongIds);
     return shuffle(questions.filter((q) => want.has(q.id)), rand);

@@ -10,6 +10,7 @@ REPORTED = {
     "bool": "불리언 인덱싱",
     "bar": "px.bar()의 x·y",
     "tail": "tail()",
+    "describe": "describe()",
 }
 
 UNITS = [
@@ -86,13 +87,13 @@ CARDS = [
          "tail(2)는 마지막 두 행이다. 행 번호(인덱스)는 처음부터 매긴 번호 그대로 나온다. 예를 들어 행이 6개(인덱스 0~5)라면 tail(2)는 인덱스 4, 5다.",
          "행이 5개보다 적으면 tail()은 있는 행을 모두 보여 준다.",
      ]},
-    {"id": "c7-05", "unit": 7, "title": "describe()와 shape", "form": "df.describe()   # 메서드: 괄호 있음\ndf.shape        # 속성: 괄호 없음", "pages": "p.6", "exampleId": "e_shape",
+    {"id": "c7-05", "unit": 7, "reported": "describe", "title": "describe()와 shape", "form": "df.describe()   # 메서드: 괄호 있음\ndf.shape        # 속성: 괄호 없음", "pages": "p.6", "exampleId": "e_shape",
      "body": [
          "describe(): 수치형 열의 기본 통계(개수, 평균, 표준편차, 최솟값, 25%·50%·75%, 최댓값)를 한 번에 본다.",
          "shape: 행과 열의 개수를 (행, 열) 튜플로 알려 준다. 속성이므로 괄호를 붙이지 않는다.",
          "imdb_top_1000.csv의 shape은 (1000, 16)이다.",
      ]},
-    {"id": "c7-06", "unit": 7, "title": "describe() 결과 읽기", "form": None, "pages": "p.6", "exampleId": "e_describe",
+    {"id": "c7-06", "unit": 7, "reported": "describe", "title": "describe() 결과 읽기", "form": None, "pages": "p.6", "exampleId": "e_describe",
      "body": [
          "count 개수, mean 평균, std 표준편차, min 최솟값, 25%·50%·75% 사분위수, max 최댓값. 50%는 중앙값이다.",
          "문자열 열은 계산할 수 없으므로 기본으로는 수치형 열만 나온다.",
@@ -268,7 +269,7 @@ QUESTIONS = [
        "csv 파일은 pd.read_csv()로 읽는다. read_excel은 엑셀용, to_csv는 파일로 저장하는 메서드다. pd.load_csv는 없다.", "p.3"),
     mc("q7-07", 7, "수치형 열의 개수, 평균, 표준편차, 최솟값, 사분위수, 최댓값을 한 번에 보여 주는 메서드는?",
        ["describe()", "head()", "tail()", "shape"], 0,
-       "describe()가 기본 통계 정보를 한꺼번에 보여 준다. head·tail은 행 확인용, shape은 크기 확인용이다.", "p.6"),
+       "describe()가 기본 통계 정보를 한꺼번에 보여 준다. head·tail은 행 확인용, shape은 크기 확인용이다.", "p.6", reported="describe"),
     mc("q7-08", 7, "다음 코드의 실행 결과는?",
        ["(4, 3)", "(3, 4)", "(4, 4)", "(3, 3)"], 0,
        "shape은 (행, 열) 순서다. 행이 4개, 열이 3개이므로 (4, 3)이다.", "p.6",
@@ -328,6 +329,19 @@ QUESTIONS = [
        ["y에 넣은 counts", "x에 넣은 ratings", "title", "labels"], 0,
        "px.bar()에서 x는 막대 이름(평점 구간), y는 막대 높이(영화 편수)다. title은 제목, labels는 축 이름이다.", "p.17–18",
        code="ratings = ['9.0 이상', '8.0~9.0 미만', '8.0 미만']\ncounts = [len(high), len(mid), len(low)]\nfig = px.bar(x=ratings, y=counts, title='평점 구간별 영화 편수')", reported="bar"),
+    ox("q7-21", 7, "describe()는 메서드이므로 df.describe()처럼 괄호를 붙여 호출한다.", True,
+       "describe()는 메서드라 괄호를 붙인다. 괄호를 붙이지 않는 것은 속성인 shape이다.", "p.6", reported="describe"),
+    ox("q7-22", 7, "문자열 열과 수치형 열이 함께 있는 데이터프레임에 describe()를 실행하면, 기본으로 수치형 열의 통계만 나온다.", True,
+       "문자열은 평균·표준편차를 계산할 수 없으므로 기본 describe()는 수치형 열만 보여 준다.", "p.6", reported="describe"),
+    mc("q7-23", 7, "describe() 결과에서 중앙값을 나타내는 행은?",
+       ["50%", "mean", "std", "count"], 0,
+       "50%는 데이터를 크기순으로 늘어놓았을 때 가운데 값, 곧 중앙값이다. mean은 평균, std는 표준편차, count는 개수다.", "p.6", reported="describe"),
+    mc("q7-24", 7, "다음 코드의 출력에서 mean 행의 값은?",
+       ["8.44", "8.40", "9.20", "5.00"], 0,
+       "mean은 평균이다. (7.6 + 8.0 + 8.4 + 9.0 + 9.2) ÷ 5 = 8.44. 8.40은 50%(중앙값), 9.20은 max, 5.00은 count다.", "p.6",
+       code="df = pd.DataFrame({'IMDB_Rating': [7.6, 8.0, 8.4, 9.0, 9.2]})\nprint(df['IMDB_Rating'].describe())",
+       expect="count    5.000000\nmean     8.440000\nstd      0.669328\nmin      7.600000\n25%      8.000000\n50%      8.400000\n75%      9.000000\nmax      9.200000\nName: IMDB_Rating, dtype: float64",
+       loose=True, reported="describe"),
 
     # ===== 9장 =====
     ox("q9-01", 9, "Plotly로 만든 그래프는 마우스로 확대·이동하거나 점 위에 올려 값을 볼 수 있다.", True,

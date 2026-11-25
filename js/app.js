@@ -7,7 +7,7 @@ const view = document.getElementById('view');
 const store = createStore();
 const NUMS = ['①', '②', '③', '④'];
 let DB = null; // { units, reported, cards, questions, examples }
-let session = null; // { key, kind, unit, list, i, choices, picks, done }
+let session = null; // { key, kind, unit, topic, list, i, choices, picks, done }
 
 async function loadData() {
   const get = (p) => fetch(p).then((r) => { if (!r.ok) throw new Error(p); return r.json(); });
@@ -58,7 +58,7 @@ function renderHome() {
     <p class="sub">단원을 골라 개념 카드를 넘겨 보고, 끝나면 그 단원 문제를 풀어요. 카드 ${DB.cards.length}장 · 문제 ${DB.questions.length}문항. 시험은 O/X ${MOCK_OX}문제 + 객관식 ${MOCK_SIZE - MOCK_OX}문제예요.</p>
     <ul class="units">${rows}</ul>
     <a class="btn" href="#/mock">모의고사 ${MOCK_SIZE}문제 시작</a>
-    <a class="btn ghost rep-btn" href="#/reported/quiz">나왔다고 함 모아 풀기 · ${repCount}문항</a>
+    <a class="btn ghost rep-btn" href="#/reported">나왔다고 함 모아 보기 · ${repCount}문항</a>
     <p class="rep-note">다른 학생이 시험에 나왔다고 전한 주제: ${repNames}. 이번 시험과 다를 수 있어요.</p>
     <div class="row-btns"><a class="btn ghost" href="#/wrong">오답노트${wrong ? ` · ${wrong}` : ''}</a></div>
     <button class="linkbtn" id="reset" type="button">기록 초기화</button>`, 'home');
@@ -114,15 +114,17 @@ function addSwipe(el, onLeft, onRight) {
 }
 
 /* ---------- 문제 풀이 ---------- */
+const tabOf = (kind) => (kind === 'mock' ? 'mock' : kind === 'wrong' ? 'wrong' : kind === 'reported' ? 'reported' : 'home');
+
 function startSession(key, kind, opts) {
   const list = buildSession(kind, { questions: DB.questions, ...opts });
-  session = { key, kind, unit: opts.unit, list, i: 0, choices: list.map((q) => presentChoices(q)), picks: [], done: false };
+  session = { key, kind, unit: opts.unit, topic: opts.topic, list, i: 0, choices: list.map((q) => presentChoices(q)), picks: [], done: false };
 }
 
 function sessionTitle() {
   if (session.kind === 'unit') return `${session.unit}장 ${unitName(session.unit)}`;
   if (session.kind === 'wrong') return '오답 다시 풀기';
-  if (session.kind === 'reported') return '나왔다고 함 모아 풀기';
+  if (session.kind === 'reported') return session.topic ? `나왔다고 함 · ${DB.reported[session.topic] ?? session.topic}` : '나왔다고 함 모아 풀기';
   return '모의고사';
 }
 
@@ -132,7 +134,7 @@ function renderQuestion() {
   const choices = s.choices[s.i];
   const pick = s.picks[s.i];
   const answered = pick !== undefined && s.kind !== 'mock';
-  const tab = s.kind === 'mock' ? 'mock' : s.kind === 'wrong' ? 'wrong' : 'home';
+  const tab = tabOf(s.kind);
   const btns = choices.map((c, j) => {
     let cls = 'choice';
     if (answered) cls += c.isAnswer ? ' right' : j === pick ? ' wrong' : '';
@@ -197,8 +199,8 @@ function finishSession() {
     ${nextUnit}
     <div class="row-btns">
       ${store.wrongIds().length ? '<button type="button" class="btn ghost" id="retry-wrong">틀린 문제 다시 풀기</button>' : ''}
-      <a class="btn ghost" href="#/">단원 목록</a>
-    </div>`, s.kind === 'mock' ? 'mock' : s.kind === 'wrong' ? 'wrong' : 'home');
+      <a class="btn ghost" href="${s.kind === 'reported' ? '#/reported' : '#/'}">${s.kind === 'reported' ? '나왔다고 함 목록' : '단원 목록'}</a>
+    </div>`, tabOf(s.kind));
   document.getElementById('retry-wrong')?.addEventListener('click', () => {
     // 이미 #/wrong/quiz에 있으면 hashchange가 안 생기므로 직접 다시 시작
     session = null;
@@ -235,6 +237,29 @@ function renderMockStart() {
   });
 }
 
+/* ---------- 나왔다고 함 ---------- */
+function renderReported() {
+  const topics = Object.keys(DB.reported);
+  const total = DB.questions.filter((q) => q.reported).length;
+  const sections = topics.map((t) => {
+    const qs = DB.questions.filter((q) => q.reported === t);
+    const cards = DB.cards.filter((c) => c.reported === t).map((c) => {
+      const k = unitCards(c.unit).indexOf(c) + 1;
+      return `<li><a href="#/unit/${c.unit}/cards/${k}"><span class="rc-title">${esc(c.title)}</span><span class="meta">${c.unit}장 · 강의자료 ${esc(c.pages)}</span></a>
+        ${c.form ? `<pre class="form">${esc(c.form)}</pre>` : ''}</li>`;
+    }).join('');
+    return `<section class="rep-topic">
+      <h2>${esc(DB.reported[t])}</h2>
+      <ul class="rep-cards">${cards}</ul>
+      ${qs.length ? `<a class="btn ghost" href="#/reported/quiz/${encodeURIComponent(t)}">이 주제 ${qs.length}문항 풀기</a>` : ''}
+    </section>`;
+  }).join('');
+  show(`<h1>나왔다고 함</h1>
+    <p class="sub">다른 학생이 시험에 나왔다고 전한 주제 ${topics.length}가지예요. 이번 시험과 다를 수 있어요.</p>
+    <a class="btn" href="#/reported/quiz">전부 모아 풀기 · ${total}문항</a>
+    ${sections}`, 'reported');
+}
+
 function renderNotFound() {
   show('<h1>페이지를 찾을 수 없어요</h1><a class="btn ghost" href="#/">단원 목록으로</a>', 'home');
 }
@@ -255,8 +280,12 @@ function route() {
     return runSession('wrong', 'wrong', { wrongIds: store.wrongIds() },
       '<h1>오답노트</h1><p class="sub">틀린 문제가 없어요.</p><a class="btn ghost" href="#/">단원 목록으로</a>', 'wrong');
   }
+  if (h === '/reported') return renderReported();
   if (h === '/reported/quiz') {
-    return runSession('reported', 'reported', {}, '<h1>문제가 없어요</h1><a class="btn ghost" href="#/">단원 목록으로</a>', 'home');
+    return runSession('reported', 'reported', {}, '<h1>문제가 없어요</h1><a class="btn ghost" href="#/reported">나왔다고 함 목록으로</a>', 'reported');
+  }
+  if ((m = h.match(/^\/reported\/quiz\/([a-z]+)$/)) && DB.reported[m[1]]) {
+    return runSession('reported:' + m[1], 'reported', { topic: m[1] }, '<h1>문제가 없어요</h1><a class="btn ghost" href="#/reported">나왔다고 함 목록으로</a>', 'reported');
   }
   if (h === '/mock') return renderMockStart();
   if (h === '/mock/run') return runSession('mock', 'mock', {}, '<h1>문제가 없어요</h1>', 'mock');

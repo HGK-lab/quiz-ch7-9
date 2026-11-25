@@ -13,7 +13,8 @@
   "nbins": "nbins·구간 너비",
   "bool": "불리언 인덱싱",
   "bar": "px.bar()의 x·y",
-  "tail": "tail()"
+  "tail": "tail()",
+  "describe": "describe()"
  },
  "cards": [
   {
@@ -126,7 +127,8 @@
    ],
    "exampleId": "e_shape",
    "pages": "p.6",
-   "lectureOnly": false
+   "lectureOnly": false,
+   "reported": "describe"
   },
   {
    "id": "c7-06",
@@ -139,7 +141,8 @@
    ],
    "exampleId": "e_describe",
    "pages": "p.6",
-   "lectureOnly": false
+   "lectureOnly": false,
+   "reported": "describe"
   },
   {
    "id": "c7-07",
