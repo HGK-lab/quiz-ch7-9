@@ -14,7 +14,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from content import CARDS, EXAMPLES, UNITS, QUESTIONS
+from content import CARDS, EXAMPLES, UNITS, QUESTIONS, REPORTED
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(r"C:\Users\ii076\Desktop\python_learn\Pandas\5장\data")
@@ -89,8 +89,10 @@ def main() -> None:
             card["compare"] = c["compare"]
         if "chart" in c:
             card["chart"] = charts[c["chart"]]
+        if "reported" in c:
+            card["reported"] = c["reported"]
         cards.append(card)
-    (out / "cards.json").write_text(json.dumps({"units": UNITS, "cards": cards}, ensure_ascii=False, indent=1), encoding="utf-8")
+    (out / "cards.json").write_text(json.dumps({"units": UNITS, "reported": REPORTED, "cards": cards}, ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "examples.json").write_text(json.dumps([build_example(s) for s in EXAMPLES], ensure_ascii=False, indent=1), encoding="utf-8")
     (out / "questions.json").write_text(json.dumps(QUESTIONS, ensure_ascii=False, indent=1), encoding="utf-8")
     print("cards", len(cards), "examples", len(EXAMPLES), "questions", len(QUESTIONS))

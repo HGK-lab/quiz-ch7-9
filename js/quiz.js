@@ -32,18 +32,35 @@ export function grade(_q, picked) {
 
 const byId = (a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0);
 
-/** 풀 문항 목록을 만든다. kind: 'unit' | 'wrong' | 'mock' */
+/** '나왔다고 함' 주제 이름 목록(문항에 나온 순서대로 중복 없이). */
+export function reportedTopics(questions) {
+  return [...new Set(questions.map((q) => q.reported).filter(Boolean))];
+}
+
+/** 풀 문항 목록을 만든다. kind: 'unit' | 'wrong' | 'reported' | 'mock' */
 export function buildSession(kind, { questions, unit, wrongIds = [], rand = Math.random }) {
   if (kind === 'unit') return questions.filter((q) => q.unit === unit).sort(byId);
+  if (kind === 'reported') return questions.filter((q) => q.reported).sort(byId);
   if (kind === 'wrong') {
     const want = new Set(wrongIds);
     return shuffle(questions.filter((q) => want.has(q.id)), rand);
   }
   if (kind === 'mock') {
     // 시험과 같은 구성: O/X 3개 + 객관식 7개를 뽑아 섞는다. 한쪽이 모자라면 있는 만큼만.
-    const oxs = shuffle(questions.filter((q) => q.type === 'ox'), rand).slice(0, MOCK_OX);
-    const mcs = shuffle(questions.filter((q) => q.type === 'mc'), rand).slice(0, MOCK_SIZE - oxs.length);
-    return shuffle([...oxs, ...mcs], rand);
+    // '나왔다고 함' 주제는 주제마다 한 문제씩 먼저 넣고, 나머지를 무작위로 채운다.
+    const nOx = Math.min(MOCK_OX, questions.filter((q) => q.type === 'ox').length);
+    const want = { ox: nOx, mc: MOCK_SIZE - nOx };
+    const picked = [];
+    const take = (q) => { picked.push(q); want[q.type] -= 1; };
+    for (const topic of reportedTopics(questions)) {
+      const pool = shuffle(questions.filter((q) => q.reported === topic && want[q.type] > 0), rand);
+      if (pool.length) take(pool[0]);
+    }
+    for (const type of ['ox', 'mc']) {
+      const rest = shuffle(questions.filter((q) => q.type === type && !picked.includes(q)), rand);
+      rest.slice(0, Math.max(0, want[type])).forEach(take);
+    }
+    return shuffle(picked, rand);
   }
   throw new Error('unknown session kind: ' + kind);
 }

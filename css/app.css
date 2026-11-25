@@ -71,6 +71,10 @@ h2 { font-size: 20px; line-height: 1.35; margin: 4px 0 12px; }
 .form { background: var(--well); border-radius: 8px; padding: 10px 12px; font-size: 13px; line-height: 1.5; overflow-x: auto; white-space: pre-wrap; word-break: break-word; margin: 0 0 14px; }
 .src { color: var(--muted); font-size: 13px; margin-top: 12px; }
 .tag { display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 8px; border-radius: 10px; background: #fff3e0; color: var(--warn); margin-left: 6px; white-space: nowrap; vertical-align: 1px; }
+.tag.rep { background: #fde8dc; color: var(--accent); }
+.qtype + .tag.rep { margin-left: 8px; vertical-align: 0; }
+.rep-btn { margin-top: 10px; }
+.rep-note { color: var(--muted); font-size: 14px; margin: 8px 0 0; word-break: keep-all; }
 .dots { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
 .dots i { width: 7px; height: 7px; border-radius: 50%; background: #d0d3d9; }
 .dots i.on { background: var(--ink); }

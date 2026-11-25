@@ -4,6 +4,14 @@ build_content.py가 이 파일을 읽어 data/*.json을 만든다(예시 표와 
 쪽 번호는 강의자료 슬라이드 번호(슬라이드 오른쪽 아래 숫자)다.
 """
 
+# 다른 학생이 "시험에 나왔다"고 전한 주제(7·9장 범위만). 그 학생 시험과 다를 수 있어 '확정'이 아니라 '나왔다고 함'으로 표시한다.
+REPORTED = {
+    "nbins": "nbins·구간 너비",
+    "bool": "불리언 인덱싱",
+    "bar": "px.bar()의 x·y",
+    "tail": "tail()",
+}
+
 UNITS = [
     {"no": 7, "name": "영화 데이터 분석하기"},
     {"no": 9, "name": "Plotly로 시각화하기"},
@@ -71,10 +79,12 @@ CARDS = [
          ["No_of_Votes", "투표수", "평점을 매긴 이용자 수"],
          ["Gross", "흥행수익", "박스오피스 매출, 달러 단위"],
      ]}},
-    {"id": "c7-04", "unit": 7, "title": "head()와 tail()", "form": "df.head()    # 처음 5행\ndf.tail()    # 마지막 5행\ndf.head(3)   # 처음 3행", "pages": "p.5", "exampleId": "e_headtail",
+    {"id": "c7-04", "unit": 7, "reported": "tail", "title": "head()와 tail()", "form": "df.head()    # 처음 5행\ndf.tail()    # 마지막 5행\ndf.head(3)   # 처음 3행", "pages": "p.5", "exampleId": "e_headtail",
      "body": [
          "head(): 데이터프레임의 처음 5행을 본다. tail(): 마지막 5행을 본다.",
          "괄호 안에 숫자를 넣으면 그 개수만큼 보여 준다. 숫자가 없으면 5개가 기본이다.",
+         "tail(2)는 마지막 두 행이다. 행 번호(인덱스)는 처음부터 매긴 번호 그대로 나온다. 예를 들어 행이 6개(인덱스 0~5)라면 tail(2)는 인덱스 4, 5다.",
+         "행이 5개보다 적으면 tail()은 있는 행을 모두 보여 준다.",
      ]},
     {"id": "c7-05", "unit": 7, "title": "describe()와 shape", "form": "df.describe()   # 메서드: 괄호 있음\ndf.shape        # 속성: 괄호 없음", "pages": "p.6", "exampleId": "e_shape",
      "body": [
@@ -92,11 +102,12 @@ CARDS = [
          "열 하나를 df['열이름']으로 꺼낸 뒤 mean(), max(), min()을 붙인다.",
          "강의 결과: 평균 평점 약 7.95, 최고 평점 9.3(The Shawshank Redemption), 최저 평점 7.6.",
      ]},
-    {"id": "c7-08", "unit": 7, "title": "불리언 인덱싱", "form": "max_rating = df['IMDB_Rating'].max()\nmask = df['IMDB_Rating'] == max_rating   # 1단계 조건 검사\nbest = df[mask]                          # 2단계 필터링", "pages": "p.9–10", "exampleId": "e_mask",
+    {"id": "c7-08", "unit": 7, "reported": "bool", "title": "불리언 인덱싱", "form": "max_rating = df['IMDB_Rating'].max()\nmask = df['IMDB_Rating'] == max_rating   # 1단계 조건 검사\nbest = df[mask]                          # 2단계 필터링", "pages": "p.9–10", "exampleId": "e_mask",
      "body": [
          "불리언 인덱싱: 조건을 만족하는 행만 고르는 방법. ① 조건 검사로 True/False로 된 Series(마스크)를 만들고 ② df[마스크]로 True인 행만 뽑는다.",
          "같은지 비교할 때는 ==(두 개)를 쓴다. =(한 개)는 대입이라 오류가 난다.",
          "열 몇 개만 보려면 best[['Series_Title', 'IMDB_Rating']]처럼 이중 대괄호를 쓴다.",
+         "마스크 자체(df['IMDB_Rating'] == max_rating)는 행이 아니라 True/False로 된 Series다. df[...]로 감싸야 행이 뽑힌다.",
      ]},
     {"id": "c7-09", "unit": 7, "title": "최저 평점 영화와 len()", "form": "min_rating = df['IMDB_Rating'].min()\nlowest = df[df['IMDB_Rating'] == min_rating]\nlen(lowest)", "pages": "p.11, 13",
      "body": [
@@ -109,7 +120,7 @@ CARDS = [
          "sum(): 전체 투표 수(대중적인 인기). mean(): 영화 한 편당 평균 투표 수(평가의 신뢰도 파악에 도움).",
          "강의 결과: 전체 참여자 수 273,692,911명, 영화당 평균 약 273,692명.",
      ]},
-    {"id": "c7-11", "unit": 7, "title": "조건 두 개 합치기: &", "form": "mid = df[(df['IMDB_Rating'] >= 8.0) & (df['IMDB_Rating'] < 9.0)]", "pages": "p.18", "exampleId": "e_range",
+    {"id": "c7-11", "unit": 7, "reported": "bool", "title": "조건 두 개 합치기: &", "form": "mid = df[(df['IMDB_Rating'] >= 8.0) & (df['IMDB_Rating'] < 9.0)]", "pages": "p.18", "exampleId": "e_range",
      "body": [
          "두 조건을 모두 만족하는 행: 각 조건을 괄호로 묶고 &로 잇는다. 하나라도 만족하면 |(OR).",
          "Series에는 and, or를 쓰지 않는다.",
@@ -120,9 +131,10 @@ CARDS = [
          "목표: 영화별 투표수가 어떤 범위에 많이 분포하는지 확인.",
          "해석: 대부분 영화가 투표수 50만 표 미만에 몰려 있다. 가장 빈도가 높은 구간은 약 0~20만 표. 투표수가 커질수록 영화 수가 줄고, 일부 영화만 100만 표 이상이다.",
      ]},
-    {"id": "c7-13", "unit": 7, "title": "그래프 ②: 평점 구간별 편수(막대)", "form": "ratings = ['9.0 이상', '8.0~9.0 미만', '8.0 미만']\ncounts = [len(high), len(mid), len(low)]\nfig = px.bar(x=ratings, y=counts, title='...',\n             labels={'x': '평점 구간', 'y': '영화 편수'})", "pages": "p.17–18", "chart": "rating_bar",
+    {"id": "c7-13", "unit": 7, "reported": "bar", "title": "그래프 ②: 평점 구간별 편수(막대)", "form": "ratings = ['9.0 이상', '8.0~9.0 미만', '8.0 미만']\ncounts = [len(high), len(mid), len(low)]\nfig = px.bar(x=ratings, y=counts, title='...',\n             labels={'x': '평점 구간', 'y': '영화 편수'})", "pages": "p.17–18", "chart": "rating_bar",
      "body": [
          "목표: 평점 구간별 영화 편수 비교(불리언 인덱싱과 len() 활용).",
+         "x에는 막대 이름인 평점 구간을, y에는 막대 높이인 영화 편수를 넣는다.",
          "해석: 8.0 미만이 가장 많고 8.0~9.0 미만이 그다음. 9.0 이상은 매우 적어 큰 차이가 난다.",
      ]},
     {"id": "c7-14", "unit": 7, "title": "그래프 ③: 연도별 평균 평점(꺾은선)", "form": "yearly_rating = df.groupby('Released_Year')['IMDB_Rating'].mean()\nfig = px.line(yearly_rating, x=yearly_rating.index, y=yearly_rating.values)", "pages": "p.19–20", "chart": "year_line",
@@ -154,11 +166,12 @@ CARDS = [
          "히스토그램: 데이터를 일정한 구간(bin)으로 나누고, 각 구간에 속한 데이터의 개수(빈도)를 막대 높이로 나타낸 그래프. 주로 연속형 데이터에 쓴다.",
          "알 수 있는 것: 데이터 분포, 최빈값(가장 높은 막대 구간), 범위(퍼진 정도), 특별한 값(이상치), 치우친 방향.",
      ]},
-    {"id": "c9-05", "unit": 9, "title": "px.histogram()", "form": "fig = px.histogram(df, x='IMDB_Rating', nbins=20, title='영화 평점 분포')\nfig.show()", "pages": "p.6–9",
+    {"id": "c9-05", "unit": 9, "reported": "nbins", "title": "px.histogram()", "form": "fig = px.histogram(df, x='IMDB_Rating', nbins=20, title='영화 평점 분포')\nfig.show()", "pages": "p.6–9",
      "body": [
          "df: 데이터프레임, x: X축 열, nbins: 구간 개수(기본값 10), title: 그래프 제목.",
          "fig.show(): 만든 그래프(fig 객체)를 화면에 그린다.",
-         "구간 너비 = (최댓값 − 최솟값) ÷ nbins. nbins가 클수록 구간이 잘게 나뉘어 더 세밀한 분포가 보인다.",
+         "구간 개수 변경하기(p.8): nbins 값으로 조절한다. 구간 개수가 많을수록 세밀한 데이터 분포를 확인할 수 있다.",
+         "구간 너비 = (최댓값 − 최솟값) ÷ nbins. 예: 최솟값 7.0, 최댓값 9.0, nbins=20이면 (9.0 − 7.0) ÷ 20 = 0.1.",
      ]},
     {"id": "c9-06", "unit": 9, "title": "평점 히스토그램 읽기", "form": None, "pages": "p.7", "chart": "rating_hist",
      "body": [
@@ -201,9 +214,10 @@ CARDS = [
          ["sum()", "묶음마다 합계", "월별 총 주문금액"],
          ["count()", "묶음마다 개수", "월별 주문 횟수"],
      ]}},
-    {"id": "c9-13", "unit": 9, "title": "px.bar(): 막대그래프", "form": "fig = px.bar(transactions,\n              x=transactions.index,\n              y=transactions.values,\n              title='월별 배달음식 주문 횟수',\n              labels={'x': '주문년월', 'y': '주문횟수'})\nfig.show()", "pages": "p.21–22", "chart": "monthly_bar",
+    {"id": "c9-13", "unit": 9, "reported": "bar", "title": "px.bar(): 막대그래프", "form": "fig = px.bar(transactions,\n              x=transactions.index,\n              y=transactions.values,\n              title='월별 배달음식 주문 횟수',\n              labels={'x': '주문년월', 'y': '주문횟수'})\nfig.show()", "pages": "p.21–22", "chart": "monthly_bar",
      "body": [
          "막대그래프: 범주형 데이터의 크기·빈도를 비교한다. 크기는 막대 길이(높이).",
+         "x=transactions.index(주문년월, 막대 이름), y=transactions.values(주문 횟수, 막대 높이). index와 values는 속성이라 괄호가 없다.",
          "labels는 X축·Y축 이름을 지정하는 딕셔너리(중괄호)다. 리스트나 title이 아니다.",
      ]},
     {"id": "c9-14", "unit": 9, "title": "어떤 그래프를 쓸까", "form": None, "pages": "p.5, 16, 21",
@@ -218,16 +232,21 @@ CARDS = [
 # ---------------------------------------------------------------- 문제
 # type: ox | mc. mc는 choices와 answer(0부터). expect가 있으면 code를 실행해 같은지 검증한다.
 # loose: 정답 보기 문장이 출력과 달라도 되는 경우.
-def ox(id, unit, stem, answer, explain, pages, code=None, expect=None):
-    return {"id": id, "unit": unit, "type": "ox", "stem": stem, "code": code, "answer": answer,
-            "explain": explain, "pages": pages, "lectureOnly": False, "expect": expect}
+def ox(id, unit, stem, answer, explain, pages, code=None, expect=None, reported=None):
+    q = {"id": id, "unit": unit, "type": "ox", "stem": stem, "code": code, "answer": answer,
+         "explain": explain, "pages": pages, "lectureOnly": False, "expect": expect}
+    if reported:
+        q["reported"] = reported
+    return q
 
 
-def mc(id, unit, stem, choices, answer, explain, pages, code=None, expect=None, loose=False):
+def mc(id, unit, stem, choices, answer, explain, pages, code=None, expect=None, loose=False, reported=None):
     q = {"id": id, "unit": unit, "type": "mc", "stem": stem, "code": code, "choices": choices, "answer": answer,
          "explain": explain, "pages": pages, "lectureOnly": False, "expect": expect}
     if loose:
         q["loose"] = True
+    if reported:
+        q["reported"] = reported
     return q
 
 
@@ -238,12 +257,12 @@ QUESTIONS = [
     ox("q7-02", 7, "df.shape는 속성이 아니라 메서드이므로 df.shape()처럼 괄호를 붙여 호출해야 한다.", False,
        "shape는 속성이다. 괄호 없이 df.shape로 쓰고, 결과는 (행, 열) 튜플이다. 괄호를 붙이면 튜플을 호출하려 해서 오류가 난다.", "p.6"),
     ox("q7-03", 7, "head()와 tail()에 숫자를 넣지 않으면 각각 처음 5행, 마지막 5행을 보여 준다.", True,
-       "head()와 tail()의 기본값은 5행이다. head(3)처럼 숫자를 넣으면 그 개수만큼 본다.", "p.5"),
+       "head()와 tail()의 기본값은 5행이다. head(3)처럼 숫자를 넣으면 그 개수만큼 본다.", "p.5", reported="tail"),
     ox("q7-04", 7, "불리언 인덱싱은 먼저 조건 검사로 True/False Series를 만들고, 그다음 True인 행만 걸러 내는 순서로 이루어진다.", True,
-       "1단계 조건 검사로 불리언 마스크를 만들고, 2단계 df[마스크]로 True인 행만 추출한다.", "p.9"),
+       "1단계 조건 검사로 불리언 마스크를 만들고, 2단계 df[마스크]로 True인 행만 추출한다.", "p.9", reported="bool"),
     ox("q7-05", 7, "다음 코드의 출력은 2이다.", True,
        "평점이 8.0인 행은 인덱스 0과 2, 두 행이므로 len의 결과는 2이다.", "p.9–10, 18",
-       code="df = pd.DataFrame({'IMDB_Rating': [8.0, 9.0, 8.0, 7.5]})\nprint(len(df[df['IMDB_Rating'] == 8.0]))", expect="2"),
+       code="df = pd.DataFrame({'IMDB_Rating': [8.0, 9.0, 8.0, 7.5]})\nprint(len(df[df['IMDB_Rating'] == 8.0]))", expect="2", reported="bool"),
     mc("q7-06", 7, "'data/movies.csv' 파일을 데이터프레임으로 불러오는 올바른 코드는?",
        ["df = pd.read_csv('data/movies.csv')", "df = pd.load_csv('data/movies.csv')", "df = pd.read_excel('data/movies.csv')", "df = df.to_csv('data/movies.csv')"], 0,
        "csv 파일은 pd.read_csv()로 읽는다. read_excel은 엑셀용, to_csv는 파일로 저장하는 메서드다. pd.load_csv는 없다.", "p.3"),
@@ -265,27 +284,50 @@ QUESTIONS = [
        ["인덱스 0과 2만 True이다.", "인덱스 0, 2, 3이 True이다.", "인덱스 1만 True이다.", "모든 행이 True이다."], 0,
        "> 8.0은 8.0보다 '큰' 값만 True다. 8.6(인덱스 0)과 9.0(인덱스 2)만 True이고 8.0(인덱스 3)은 False다.", "p.9–10",
        code="df = pd.DataFrame({'IMDB_Rating': [8.6, 7.9, 9.0, 8.0]})\nprint(df['IMDB_Rating'] > 8.0)",
-       expect="0     True\n1    False\n2     True\n3    False\nName: IMDB_Rating, dtype: bool", loose=True),
+       expect="0     True\n1    False\n2     True\n3    False\nName: IMDB_Rating, dtype: bool", loose=True, reported="bool"),
     mc("q7-12", 7, "평점이 가장 낮은 영화를 모두 추출하는 올바른 코드는?",
        ["min_rating = df['IMDB_Rating'].min()\ndf[df['IMDB_Rating'] == min_rating]",
         "min_rating = df['IMDB_Rating'].min()\ndf[df['IMDB_Rating'] = min_rating]",
         "df['IMDB_Rating'].min()",
         "df[df['IMDB_Rating'] == df['IMDB_Rating'].max()]"], 0,
-       "최솟값을 구하고 ==로 같은지 비교해 True인 행만 뽑는다. =은 대입이라 오류, min()만 쓰면 값 하나뿐이고, max()와 비교하면 최고 평점 영화가 나온다.", "p.11"),
+       "최솟값을 구하고 ==로 같은지 비교해 True인 행만 뽑는다. =은 대입이라 오류, min()만 쓰면 값 하나뿐이고, max()와 비교하면 최고 평점 영화가 나온다.", "p.11", reported="bool"),
     mc("q7-13", 7, "다음 코드의 실행 결과는?",
        ["3", "1", "2", "5"], 0,
        "최저 평점은 7.6이고 7.6인 영화는 3편(인덱스 0, 2, 3)이므로 len(result)는 3이다.", "p.11",
-       code="df = pd.DataFrame({'IMDB_Rating': [7.6, 8.1, 7.6, 7.6, 8.8]})\nmin_rating = df['IMDB_Rating'].min()\nresult = df[df['IMDB_Rating'] == min_rating]\nprint(len(result))", expect="3"),
+       code="df = pd.DataFrame({'IMDB_Rating': [7.6, 8.1, 7.6, 7.6, 8.8]})\nmin_rating = df['IMDB_Rating'].min()\nresult = df[df['IMDB_Rating'] == min_rating]\nprint(len(result))", expect="3", reported="bool"),
     mc("q7-14", 7, "다음 코드의 실행 결과는?",
        ["3", "2", "4", "6"], 0,
        "8.0 이상이고 9.0 미만인 값은 8.0, 8.9, 8.4로 3개다. 9.0은 '미만' 조건에서 빠진다.", "p.18",
-       code="df = pd.DataFrame({'IMDB_Rating': [7.8, 8.0, 8.9, 9.0, 8.4, 9.3]})\nmid = df[(df['IMDB_Rating'] >= 8.0) & (df['IMDB_Rating'] < 9.0)]\nprint(len(mid))", expect="3"),
+       code="df = pd.DataFrame({'IMDB_Rating': [7.8, 8.0, 8.9, 9.0, 8.4, 9.3]})\nmid = df[(df['IMDB_Rating'] >= 8.0) & (df['IMDB_Rating'] < 9.0)]\nprint(len(mid))", expect="3", reported="bool"),
     mc("q7-15", 7, "영화 투표수 히스토그램에서 0~20만 표 구간의 막대가 가장 높았다. 올바른 해석은?",
        ["투표수가 적은 영화가 많고, 투표수가 커질수록 영화 수가 줄어든다.",
         "모든 영화의 투표수가 20만 표이다.",
         "투표수가 많을수록 영화 수도 늘어난다.",
         "투표수가 가장 많은 영화는 20만 표를 받았다."], 0,
        "막대 높이는 구간에 속한 영화 수다. 0~20만 구간이 가장 높고 오른쪽으로 갈수록 낮아지므로 투표수가 적은 영화가 대부분이다.", "p.15–16"),
+
+    # ----- 나왔다고 함: 불리언 인덱싱, tail(), 막대 x·y
+    mc("q7-16", 7, "다음 코드의 실행 결과는?",
+       ["['B', 'D']", "['B', 'C', 'D']", "['A', 'C', 'E']", "['D']"], 0,
+       "조건 >= 8.5를 만족하는 행은 B(8.8)와 D(9.1)다. 8.5 '이상'이므로 8.4인 C는 빠진다.", "p.9–10",
+       code="df = pd.DataFrame({\n    'Series_Title': ['A', 'B', 'C', 'D', 'E'],\n    'IMDB_Rating': [7.9, 8.8, 8.4, 9.1, 8.0]\n})\nresult = df[df['IMDB_Rating'] >= 8.5]\nprint(list(result['Series_Title']))",
+       expect="['B', 'D']", reported="bool"),
+    mc("q7-17", 7, "다음 코드를 실행했을 때 mask에 들어 있는 것은?",
+       ["행마다 True/False가 들어 있는 Series", "최고 평점을 받은 영화의 행들", "최고 평점 값 하나", "오류가 나서 아무것도 없다"], 0,
+       "조건 검사의 결과는 행마다 True/False인 Series(마스크)다. 영화 행을 뽑으려면 df[mask]로 한 번 더 걸러야 한다.", "p.9–10",
+       code="max_rating = df['IMDB_Rating'].max()\nmask = df['IMDB_Rating'] == max_rating", reported="bool"),
+    mc("q7-18", 7, "다음 코드에서 출력되는 행의 인덱스는?",
+       ["4, 5", "0, 1", "3, 4, 5", "1, 2"], 0,
+       "tail(2)는 마지막 두 행이다. 행이 6개이고 인덱스는 0부터 5까지이므로 인덱스 4, 5가 나온다. 0, 1은 head(2)의 결과다.", "p.5",
+       code="df = pd.DataFrame({\n    'A': [10, 20, 30, 40, 50, 60],\n    'B': [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]\n})\nprint(df.tail(2))",
+       expect="A    B\n4  50  5.5\n5  60  6.5", loose=True, reported="tail"),
+    ox("q7-19", 7, "행이 4개인 데이터프레임에 df.tail()을 실행하면 4행이 모두 나온다.", True,
+       "tail()의 기본값은 5행이지만 행이 4개뿐이면 있는 4행을 모두 보여 준다. 아래 코드의 출력은 4이다.", "p.5",
+       code="df = pd.DataFrame({'A': [1, 2, 3, 4]})\nprint(len(df.tail()))", expect="4", reported="tail"),
+    mc("q7-20", 7, "다음 코드로 평점 구간별 편수 막대그래프를 그린다. 막대의 높이를 정하는 것은?",
+       ["y에 넣은 counts", "x에 넣은 ratings", "title", "labels"], 0,
+       "px.bar()에서 x는 막대 이름(평점 구간), y는 막대 높이(영화 편수)다. title은 제목, labels는 축 이름이다.", "p.17–18",
+       code="ratings = ['9.0 이상', '8.0~9.0 미만', '8.0 미만']\ncounts = [len(high), len(mid), len(low)]\nfig = px.bar(x=ratings, y=counts, title='평점 구간별 영화 편수')", reported="bar"),
 
     # ===== 9장 =====
     ox("q9-01", 9, "Plotly로 만든 그래프는 마우스로 확대·이동하거나 점 위에 올려 값을 볼 수 있다.", True,
@@ -310,8 +352,8 @@ QUESTIONS = [
        "히스토그램 함수는 px.histogram()이다. px.show라는 함수는 없고 그래프를 화면에 그리는 것은 fig.show()다.", "p.6"),
     mc("q9-08", 9, "다음 코드에서 nbins=25의 의미는?",
        ["히스토그램의 구간 개수를 약 25개로 설정한다.", "영화 25편만 그래프에 표시한다.", "평점이 25점 이상인 영화만 선택한다.", "그래프의 가로 길이를 25로 설정한다."], 0,
-       "nbins는 구간(bin)의 개수다. 값이 클수록 구간이 잘게 나뉜다. 구간 너비는 (최댓값 − 최솟값) ÷ nbins다.", "p.6, 8",
-       code="fig = px.histogram(df, x='IMDB_Rating', nbins=25)"),
+       "nbins는 구간(bin)의 개수다. 값이 클수록 구간이 잘게 나뉜다. 구간 너비는 (최댓값 − 최솟값) ÷ nbins다.", "p.6, 8",
+       code="fig = px.histogram(df, x='IMDB_Rating', nbins=25)", reported="nbins"),
     mc("q9-09", 9, "영화 평점 히스토그램에서 9.0점 이상 구간의 막대가 매우 낮다. 올바른 해석은?",
        ["9.0점 이상의 높은 평점을 받은 영화는 상대적으로 적다.", "9.0점 이상의 영화는 하나도 없다.", "모든 영화의 평균 평점이 9.0점이다.", "평점이 낮은 영화가 가장 적다."], 0,
        "막대가 낮다는 것은 그 구간의 영화 수가 적다는 뜻이다. 없는 것은 아니다(막대가 0이 아니다).", "p.7"),
@@ -332,7 +374,25 @@ QUESTIONS = [
     mc("q9-14", 9, "막대그래프의 X축 이름을 '월', Y축 이름을 '횟수'로 바꾸기 위해 빈칸에 들어갈 코드는?",
        ["labels={'x': '월', 'y': '횟수'}", "labels=['월', '횟수']", "title={'x': '월', 'y': '횟수'}", "xlabel='월', ylabel='횟수'"], 0,
        "px.bar()의 labels는 딕셔너리다. xlabel, ylabel은 Matplotlib 방식이라 Plotly에서는 쓰지 않는다.", "p.22",
-       code="fig = px.bar(\n    transactions,\n    x=transactions.index,\n    y=transactions.values,\n    _____\n)"),
+       code="fig = px.bar(\n    transactions,\n    x=transactions.index,\n    y=transactions.values,\n    _____\n)", reported="bar"),
+    # ----- 나왔다고 함: nbins·구간 너비, 막대 x·y
+    mc("q9-16", 9, "영화 평점의 최솟값이 7.0, 최댓값이 9.0이다. 다음 코드로 히스토그램을 그리면 구간 하나의 너비는?",
+       ["0.1", "0.2", "2.0", "20"], 0,
+       "구간 너비 = (최댓값 − 최솟값) ÷ nbins = (9.0 − 7.0) ÷ 20 = 0.1이다. 2.0은 나누기 전의 범위, 20은 구간 개수다.", "p.8",
+       code="fig = px.histogram(df, x='IMDB_Rating', nbins=20)", reported="nbins"),
+    mc("q9-17", 9, "영화 평점 히스토그램의 구간 개수를 20개로 바꾸려고 한다. 빈칸에 들어갈 코드는?",
+       ["nbins=20,", "bins=20,", "nbin=20,", "size=20,"], 0,
+       "구간 개수는 nbins 매개변수로 정한다. 이름이 정확히 nbins다(bins, nbin이 아니다).", "p.8",
+       code="fig = px.histogram(\n    df,\n    x='IMDB_Rating',\n    _____\n    title='영화 평점 분포'\n)\nfig.show()", reported="nbins"),
+    ox("q9-18", 9, "히스토그램의 nbins 값을 크게 하면 구간 너비가 넓어져 분포가 더 뭉뚱그려 보인다.", False,
+       "nbins가 크면 같은 범위를 더 많이 나누므로 구간 너비가 좁아지고 더 세밀한 분포가 보인다.", "p.8", reported="nbins"),
+    mc("q9-19", 9, "월별 주문 횟수 막대그래프에서 X축은 주문년월, Y축은 주문 횟수가 되도록 빈칸에 들어갈 코드는?",
+       ["x=transactions.index, y=transactions.values",
+        "x=transactions.values, y=transactions.index",
+        "x=transactions.index(), y=transactions.values()",
+        "x=transactions, y=transactions.count()"], 0,
+       "groupby 결과의 index는 묶은 기준(주문년월), values는 센 값(주문 횟수)이다. index와 values는 속성이라 괄호를 붙이지 않는다. 둘을 바꾸면 축이 뒤바뀐다.", "p.21–22",
+       code="transactions = df.groupby('주문년월')['주문ID'].count()\nfig = px.bar(\n    transactions,\n    _____,\n    title='월별 배달음식 주문 횟수'\n)", reported="bar"),
     mc("q9-15", 9, "월별 평균 주문금액(1월 21000, 2월 17000, 3월 24000, 4월 19000)을 꺾은선그래프로 그렸을 때 올바른 해석은?",
        ["3월이 가장 높고 2월이 가장 낮다.", "1월부터 4월까지 매월 증가한다.", "2월이 가장 높다.", "4월이 1월보다 높다."], 0,
        "값을 비교하면 3월 24000이 최대, 2월 17000이 최소다. 4월(19000)은 1월(21000)보다 낮고 매월 증가하지도 않는다.", "p.18"),

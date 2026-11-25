@@ -63,8 +63,10 @@ def verify(q: dict):
 
 
 def syntax_only(q: dict):
-    """px 코드(그래프 창을 여는 코드)는 실행하지 않고 문법만 본다. 빈칸(_____)은 대체."""
-    code = (q.get("code") or "").replace("_____", "title='t'")
+    """px 코드(그래프 창을 여는 코드)는 실행하지 않고 문법만 본다.
+    빈칸(_____)은 객관식이면 정답 보기로 채워 정답이 문법에 맞는지도 본다."""
+    fill = q["choices"][q["answer"]] if q["type"] == "mc" else "title='t'"
+    code = (q.get("code") or "").replace("_____", fill)
     try:
         ast.parse(code)
     except SyntaxError as e:

@@ -1,23 +1,25 @@
 import { createStore } from './store.js';
-import { presentChoices, grade, buildSession, scoreMock, MOCK_SIZE, MOCK_OX, POINTS_PER_QUESTION } from './quiz.js';
+import { presentChoices, grade, buildSession, scoreMock, reportedTopics, MOCK_SIZE, MOCK_OX, POINTS_PER_QUESTION } from './quiz.js';
 import { esc, exampleHTML } from './render-table.js';
 import { chartHTML, compareHTML } from './render-extra.js';
 
 const view = document.getElementById('view');
 const store = createStore();
 const NUMS = ['①', '②', '③', '④'];
-let DB = null; // { units, cards, questions, examples }
+let DB = null; // { units, reported, cards, questions, examples }
 let session = null; // { key, kind, unit, list, i, choices, picks, done }
 
 async function loadData() {
   const get = (p) => fetch(p).then((r) => { if (!r.ok) throw new Error(p); return r.json(); });
   const [c, questions, examples] = await Promise.all([get('data/cards.json'), get('data/questions.json'), get('data/examples.json')]);
-  return { units: c.units, cards: c.cards, questions, examples: Object.fromEntries(examples.map((e) => [e.id, e])) };
+  return { units: c.units, reported: c.reported ?? {}, cards: c.cards, questions, examples: Object.fromEntries(examples.map((e) => [e.id, e])) };
 }
 
 const unitName = (n) => DB.units.find((u) => u.no === n)?.name ?? '';
 const unitCards = (n) => DB.cards.filter((c) => c.unit === n);
 const lectureTag = (on) => (on ? '<span class="tag">강의자료 기준</span>' : '');
+// 다른 학생이 시험에 나왔다고 전한 주제. 이번 시험과 다를 수 있어 '확정'이라 하지 않는다.
+const repTag = (topic) => (topic ? `<span class="tag rep" title="${esc(DB.reported[topic] ?? '')}">나왔다고 함</span>` : '');
 const EXAM = new Date('2026-11-30T00:00:00+09:00'); // 시험 보는 월요일
 const looksLikeCode = (s) => /^(df|pd|px|fig|import|from|labels|title|xlabel|min_|max_|\(|\[)/.test(s) || /^-?[\d.]+$/.test(s) || !/[가-힣]/.test(s);
 const dday = () => {
@@ -49,11 +51,15 @@ function renderHome() {
       <div class="bar" aria-hidden="true"><i style="width:${pct}%"></i></div></a></li>`;
   }).join('');
   const wrong = store.wrongIds().length;
+  const repCount = DB.questions.filter((q) => q.reported).length;
+  const repNames = reportedTopics(DB.questions).map((t) => esc(DB.reported[t] ?? t)).join(', ');
   show(`<div class="top2"><span>AI응용 데이터 관리</span>${dday() ? `<span class="dday">${dday()} 월요일 시험</span>` : ''}</div>
     <h1>7장 · 9장<br>시험 대비 ${MOCK_SIZE}문제</h1>
     <p class="sub">단원을 골라 개념 카드를 넘겨 보고, 끝나면 그 단원 문제를 풀어요. 카드 ${DB.cards.length}장 · 문제 ${DB.questions.length}문항. 시험은 O/X ${MOCK_OX}문제 + 객관식 ${MOCK_SIZE - MOCK_OX}문제예요.</p>
     <ul class="units">${rows}</ul>
     <a class="btn" href="#/mock">모의고사 ${MOCK_SIZE}문제 시작</a>
+    <a class="btn ghost rep-btn" href="#/reported/quiz">나왔다고 함 모아 풀기 · ${repCount}문항</a>
+    <p class="rep-note">다른 학생이 시험에 나왔다고 전한 주제: ${repNames}. 이번 시험과 다를 수 있어요.</p>
     <div class="row-btns"><a class="btn ghost" href="#/wrong">오답노트${wrong ? ` · ${wrong}` : ''}</a></div>
     <button class="linkbtn" id="reset" type="button">기록 초기화</button>`, 'home');
   const reset = document.getElementById('reset');
@@ -76,7 +82,7 @@ function renderCard(unit, k) {
   const last = k === cards.length;
   show(`<p class="crumb"><span>${unit}장 ${esc(unitName(unit))} · ${k}/${cards.length}</span><a href="#/unit/${unit}/quiz">문제 풀기</a></p>
     <article class="card" id="card">
-      <h2>${esc(c.title)}${lectureTag(c.lectureOnly)}</h2>
+      <h2>${esc(c.title)}${repTag(c.reported)}${lectureTag(c.lectureOnly)}</h2>
       ${c.form ? `<pre class="form">${esc(c.form)}</pre>` : ''}
       ${c.body.map((b) => `<p>${esc(b)}</p>`).join('')}
       ${c.chart ? chartHTML(c.chart) : ''}
@@ -116,6 +122,7 @@ function startSession(key, kind, opts) {
 function sessionTitle() {
   if (session.kind === 'unit') return `${session.unit}장 ${unitName(session.unit)}`;
   if (session.kind === 'wrong') return '오답 다시 풀기';
+  if (session.kind === 'reported') return '나왔다고 함 모아 풀기';
   return '모의고사';
 }
 
@@ -145,7 +152,7 @@ function renderQuestion() {
     after = `<div class="row-btns"><button type="button" class="btn" id="next" ${pick === undefined ? 'disabled' : ''}>${s.i + 1 < s.list.length ? '다음' : '제출하고 채점'}</button></div>`;
   }
   show(`<p class="crumb"><span>${esc(sessionTitle())} · 문제 ${s.i + 1}/${s.list.length}</span></p>
-    <p class="qtype">${q.type === 'ox' ? 'O/X' : '객관식'}</p>
+    <p class="qtype">${q.type === 'ox' ? 'O/X' : '객관식'}</p>${repTag(q.reported)}
     <p class="stem">${esc(q.stem)}</p>
     ${q.code ? `<pre class="code">${esc(q.code)}</pre>` : ''}
     <div class="choices ${q.type === 'ox' ? 'ox' : ''}">${btns}</div>
@@ -220,7 +227,7 @@ function renderWrong() {
 
 function renderMockStart() {
   show(`<h1>모의고사</h1>
-    <p class="sub">시험과 같은 구성이에요. 문제은행 ${DB.questions.length}문항에서 O/X ${MOCK_OX}문제와 객관식 ${MOCK_SIZE - MOCK_OX}문제를 무작위로 뽑아요. 풀이 중에는 채점하지 않고 끝나면 한꺼번에 보여 줘요.</p>
+    <p class="sub">시험과 같은 구성이에요. 문제은행 ${DB.questions.length}문항에서 O/X ${MOCK_OX}문제와 객관식 ${MOCK_SIZE - MOCK_OX}문제를 무작위로 뽑아요. '나왔다고 함' 주제(${reportedTopics(DB.questions).length}가지)는 주제마다 한 문제씩 꼭 들어가요. 풀이 중에는 채점하지 않고 끝나면 한꺼번에 보여 줘요.</p>
     <button type="button" class="btn" id="start">시작하기</button>`, 'mock');
   document.getElementById('start').addEventListener('click', () => {
     session = null;
@@ -247,6 +254,9 @@ function route() {
   if (h === '/wrong/quiz') {
     return runSession('wrong', 'wrong', { wrongIds: store.wrongIds() },
       '<h1>오답노트</h1><p class="sub">틀린 문제가 없어요.</p><a class="btn ghost" href="#/">단원 목록으로</a>', 'wrong');
+  }
+  if (h === '/reported/quiz') {
+    return runSession('reported', 'reported', {}, '<h1>문제가 없어요</h1><a class="btn ghost" href="#/">단원 목록으로</a>', 'home');
   }
   if (h === '/mock') return renderMockStart();
   if (h === '/mock/run') return runSession('mock', 'mock', {}, '<h1>문제가 없어요</h1>', 'mock');

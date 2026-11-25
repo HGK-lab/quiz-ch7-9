@@ -33,7 +33,8 @@
   "explain": "head()와 tail()의 기본값은 5행이다. head(3)처럼 숫자를 넣으면 그 개수만큼 본다.",
   "pages": "p.5",
   "lectureOnly": false,
-  "expect": null
+  "expect": null,
+  "reported": "tail"
  },
  {
   "id": "q7-04",
@@ -45,7 +46,8 @@
   "explain": "1단계 조건 검사로 불리언 마스크를 만들고, 2단계 df[마스크]로 True인 행만 추출한다.",
   "pages": "p.9",
   "lectureOnly": false,
-  "expect": null
+  "expect": null,
+  "reported": "bool"
  },
  {
   "id": "q7-05",
@@ -57,7 +59,8 @@
   "explain": "평점이 8.0인 행은 인덱스 0과 2, 두 행이므로 len의 결과는 2이다.",
   "pages": "p.9–10, 18",
   "lectureOnly": false,
-  "expect": "2"
+  "expect": "2",
+  "reported": "bool"
  },
  {
   "id": "q7-06",
@@ -166,7 +169,8 @@
   "pages": "p.9–10",
   "lectureOnly": false,
   "expect": "0     True\n1    False\n2     True\n3    False\nName: IMDB_Rating, dtype: bool",
-  "loose": true
+  "loose": true,
+  "reported": "bool"
  },
  {
   "id": "q7-12",
@@ -184,7 +188,8 @@
   "explain": "최솟값을 구하고 ==로 같은지 비교해 True인 행만 뽑는다. =은 대입이라 오류, min()만 쓰면 값 하나뿐이고, max()와 비교하면 최고 평점 영화가 나온다.",
   "pages": "p.11",
   "lectureOnly": false,
-  "expect": null
+  "expect": null,
+  "reported": "bool"
  },
  {
   "id": "q7-13",
@@ -202,7 +207,8 @@
   "explain": "최저 평점은 7.6이고 7.6인 영화는 3편(인덱스 0, 2, 3)이므로 len(result)는 3이다.",
   "pages": "p.11",
   "lectureOnly": false,
-  "expect": "3"
+  "expect": "3",
+  "reported": "bool"
  },
  {
   "id": "q7-14",
@@ -220,7 +226,8 @@
   "explain": "8.0 이상이고 9.0 미만인 값은 8.0, 8.9, 8.4로 3개다. 9.0은 '미만' 조건에서 빠진다.",
   "pages": "p.18",
   "lectureOnly": false,
-  "expect": "3"
+  "expect": "3",
+  "reported": "bool"
  },
  {
   "id": "q7-15",
@@ -239,6 +246,96 @@
   "pages": "p.15–16",
   "lectureOnly": false,
   "expect": null
+ },
+ {
+  "id": "q7-16",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드의 실행 결과는?",
+  "code": "df = pd.DataFrame({\n    'Series_Title': ['A', 'B', 'C', 'D', 'E'],\n    'IMDB_Rating': [7.9, 8.8, 8.4, 9.1, 8.0]\n})\nresult = df[df['IMDB_Rating'] >= 8.5]\nprint(list(result['Series_Title']))",
+  "choices": [
+   "['B', 'D']",
+   "['B', 'C', 'D']",
+   "['A', 'C', 'E']",
+   "['D']"
+  ],
+  "answer": 0,
+  "explain": "조건 >= 8.5를 만족하는 행은 B(8.8)와 D(9.1)다. 8.5 '이상'이므로 8.4인 C는 빠진다.",
+  "pages": "p.9–10",
+  "lectureOnly": false,
+  "expect": "['B', 'D']",
+  "reported": "bool"
+ },
+ {
+  "id": "q7-17",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드를 실행했을 때 mask에 들어 있는 것은?",
+  "code": "max_rating = df['IMDB_Rating'].max()\nmask = df['IMDB_Rating'] == max_rating",
+  "choices": [
+   "행마다 True/False가 들어 있는 Series",
+   "최고 평점을 받은 영화의 행들",
+   "최고 평점 값 하나",
+   "오류가 나서 아무것도 없다"
+  ],
+  "answer": 0,
+  "explain": "조건 검사의 결과는 행마다 True/False인 Series(마스크)다. 영화 행을 뽑으려면 df[mask]로 한 번 더 걸러야 한다.",
+  "pages": "p.9–10",
+  "lectureOnly": false,
+  "expect": null,
+  "reported": "bool"
+ },
+ {
+  "id": "q7-18",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드에서 출력되는 행의 인덱스는?",
+  "code": "df = pd.DataFrame({\n    'A': [10, 20, 30, 40, 50, 60],\n    'B': [1.5, 2.5, 3.5, 4.5, 5.5, 6.5]\n})\nprint(df.tail(2))",
+  "choices": [
+   "4, 5",
+   "0, 1",
+   "3, 4, 5",
+   "1, 2"
+  ],
+  "answer": 0,
+  "explain": "tail(2)는 마지막 두 행이다. 행이 6개이고 인덱스는 0부터 5까지이므로 인덱스 4, 5가 나온다. 0, 1은 head(2)의 결과다.",
+  "pages": "p.5",
+  "lectureOnly": false,
+  "expect": "A    B\n4  50  5.5\n5  60  6.5",
+  "loose": true,
+  "reported": "tail"
+ },
+ {
+  "id": "q7-19",
+  "unit": 7,
+  "type": "ox",
+  "stem": "행이 4개인 데이터프레임에 df.tail()을 실행하면 4행이 모두 나온다.",
+  "code": "df = pd.DataFrame({'A': [1, 2, 3, 4]})\nprint(len(df.tail()))",
+  "answer": true,
+  "explain": "tail()의 기본값은 5행이지만 행이 4개뿐이면 있는 4행을 모두 보여 준다. 아래 코드의 출력은 4이다.",
+  "pages": "p.5",
+  "lectureOnly": false,
+  "expect": "4",
+  "reported": "tail"
+ },
+ {
+  "id": "q7-20",
+  "unit": 7,
+  "type": "mc",
+  "stem": "다음 코드로 평점 구간별 편수 막대그래프를 그린다. 막대의 높이를 정하는 것은?",
+  "code": "ratings = ['9.0 이상', '8.0~9.0 미만', '8.0 미만']\ncounts = [len(high), len(mid), len(low)]\nfig = px.bar(x=ratings, y=counts, title='평점 구간별 영화 편수')",
+  "choices": [
+   "y에 넣은 counts",
+   "x에 넣은 ratings",
+   "title",
+   "labels"
+  ],
+  "answer": 0,
+  "explain": "px.bar()에서 x는 막대 이름(평점 구간), y는 막대 높이(영화 편수)다. title은 제목, labels는 축 이름이다.",
+  "pages": "p.17–18",
+  "lectureOnly": false,
+  "expect": null,
+  "reported": "bar"
  },
  {
   "id": "q9-01",
@@ -355,10 +452,11 @@
    "그래프의 가로 길이를 25로 설정한다."
   ],
   "answer": 0,
-  "explain": "nbins는 구간(bin)의 개수다. 값이 클수록 구간이 잘게 나뉜다. 구간 너비는 (최댓값 − 최솟값) ÷ nbins다.",
+  "explain": "nbins는 구간(bin)의 개수다. 값이 클수록 구간이 잘게 나뉜다. 구간 너비는 (최댓값 − 최솟값) ÷ nbins다.",
   "pages": "p.6, 8",
   "lectureOnly": false,
-  "expect": null
+  "expect": null,
+  "reported": "nbins"
  },
  {
   "id": "q9-09",
@@ -466,7 +564,78 @@
   "explain": "px.bar()의 labels는 딕셔너리다. xlabel, ylabel은 Matplotlib 방식이라 Plotly에서는 쓰지 않는다.",
   "pages": "p.22",
   "lectureOnly": false,
-  "expect": null
+  "expect": null,
+  "reported": "bar"
+ },
+ {
+  "id": "q9-16",
+  "unit": 9,
+  "type": "mc",
+  "stem": "영화 평점의 최솟값이 7.0, 최댓값이 9.0이다. 다음 코드로 히스토그램을 그리면 구간 하나의 너비는?",
+  "code": "fig = px.histogram(df, x='IMDB_Rating', nbins=20)",
+  "choices": [
+   "0.1",
+   "0.2",
+   "2.0",
+   "20"
+  ],
+  "answer": 0,
+  "explain": "구간 너비 = (최댓값 − 최솟값) ÷ nbins = (9.0 − 7.0) ÷ 20 = 0.1이다. 2.0은 나누기 전의 범위, 20은 구간 개수다.",
+  "pages": "p.8",
+  "lectureOnly": false,
+  "expect": null,
+  "reported": "nbins"
+ },
+ {
+  "id": "q9-17",
+  "unit": 9,
+  "type": "mc",
+  "stem": "영화 평점 히스토그램의 구간 개수를 20개로 바꾸려고 한다. 빈칸에 들어갈 코드는?",
+  "code": "fig = px.histogram(\n    df,\n    x='IMDB_Rating',\n    _____\n    title='영화 평점 분포'\n)\nfig.show()",
+  "choices": [
+   "nbins=20,",
+   "bins=20,",
+   "nbin=20,",
+   "size=20,"
+  ],
+  "answer": 0,
+  "explain": "구간 개수는 nbins 매개변수로 정한다. 이름이 정확히 nbins다(bins, nbin이 아니다).",
+  "pages": "p.8",
+  "lectureOnly": false,
+  "expect": null,
+  "reported": "nbins"
+ },
+ {
+  "id": "q9-18",
+  "unit": 9,
+  "type": "ox",
+  "stem": "히스토그램의 nbins 값을 크게 하면 구간 너비가 넓어져 분포가 더 뭉뚱그려 보인다.",
+  "code": null,
+  "answer": false,
+  "explain": "nbins가 크면 같은 범위를 더 많이 나누므로 구간 너비가 좁아지고 더 세밀한 분포가 보인다.",
+  "pages": "p.8",
+  "lectureOnly": false,
+  "expect": null,
+  "reported": "nbins"
+ },
+ {
+  "id": "q9-19",
+  "unit": 9,
+  "type": "mc",
+  "stem": "월별 주문 횟수 막대그래프에서 X축은 주문년월, Y축은 주문 횟수가 되도록 빈칸에 들어갈 코드는?",
+  "code": "transactions = df.groupby('주문년월')['주문ID'].count()\nfig = px.bar(\n    transactions,\n    _____,\n    title='월별 배달음식 주문 횟수'\n)",
+  "choices": [
+   "x=transactions.index, y=transactions.values",
+   "x=transactions.values, y=transactions.index",
+   "x=transactions.index(), y=transactions.values()",
+   "x=transactions, y=transactions.count()"
+  ],
+  "answer": 0,
+  "explain": "groupby 결과의 index는 묶은 기준(주문년월), values는 센 값(주문 횟수)이다. index와 values는 속성이라 괄호를 붙이지 않는다. 둘을 바꾸면 축이 뒤바뀐다.",
+  "pages": "p.21–22",
+  "lectureOnly": false,
+  "expect": null,
+  "reported": "bar"
  },
  {
   "id": "q9-15",

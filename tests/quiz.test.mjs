@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { shuffle, presentChoices, grade, buildSession, scoreMock, MOCK_SIZE, MOCK_OX } from '../js/quiz.js';
+import { readFileSync } from 'node:fs';
+import { shuffle, presentChoices, grade, buildSession, scoreMock, reportedTopics, MOCK_SIZE, MOCK_OX } from '../js/quiz.js';
 
 const seq = (vals) => { let i = 0; return () => vals[i++ % vals.length]; };
 const ox = (id, answer, unit = 7) => ({ id, unit, type: 'ox', answer });
@@ -70,4 +71,39 @@ test('wrong-only session empty', () => {
 
 test('scoreMock counts correct answers', () => {
   assert.deepEqual(scoreMock([true, false, true]), { correct: 2, points: 2, max: 3 });
+});
+
+const rep = (q, topic) => ({ ...q, reported: topic });
+
+test('reported session keeps only reported questions in id order', () => {
+  const qs = [rep(mc('q9-02', 9), 'bar'), mc('q7-01'), rep(ox('q7-03', true), 'tail')];
+  assert.deepEqual(buildSession('reported', { questions: qs }).map((q) => q.id), ['q7-03', 'q9-02']);
+});
+
+test('mock always has one question per reported topic and keeps 3 ox + 7 mc', () => {
+  const qs = [
+    ...Array.from({ length: 8 }, (_, i) => ox('o' + i, true)),
+    ...Array.from({ length: 20 }, (_, i) => mc('m' + i)),
+    rep(ox('ro', false), 'nbins'), rep(mc('ra'), 'nbins'),
+    rep(mc('rb'), 'bool'), rep(mc('rc'), 'bar'), rep(ox('rd', true), 'tail'),
+  ];
+  for (let k = 0; k < 50; k++) {
+    const r = buildSession('mock', { questions: qs });
+    assert.equal(r.length, MOCK_SIZE);
+    assert.equal(r.filter((q) => q.type === 'ox').length, MOCK_OX);
+    assert.equal(new Set(r.map((q) => q.id)).size, MOCK_SIZE);
+    for (const t of reportedTopics(qs)) assert.ok(r.some((q) => q.reported === t), t);
+  }
+});
+
+test('mock on real question bank covers all reported topics', () => {
+  const bank = JSON.parse(readFileSync(new URL('../data/questions.json', import.meta.url), 'utf8'));
+  const topics = reportedTopics(bank);
+  assert.deepEqual([...topics].sort(), ['bar', 'bool', 'nbins', 'tail']);
+  for (let k = 0; k < 200; k++) {
+    const r = buildSession('mock', { questions: bank });
+    assert.equal(r.length, MOCK_SIZE);
+    assert.equal(r.filter((q) => q.type === 'ox').length, MOCK_OX);
+    for (const t of topics) assert.ok(r.some((q) => q.reported === t), t);
+  }
 });
